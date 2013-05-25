@@ -1,0 +1,28 @@
+{
+  "name": "_v_",
+  "version": "0.4.0",
+  "description": "Validator",
+  "main": "_v_.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TjRus/_v_.js.git"
+  },
+  "keywords": [
+    "javascript",
+    "validation"
+  ],
+  "author": "Vasiliy Zubach (aka TjRus)",
+  "license": "MIT",
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-gcc": "~0.2.0",
+    "grunt-contrib-concat": "~0.2.0",
+    "grunt-contrib-copy": "~0.4.1"
+  }
+}

@@ -1,4 +1,4 @@
-_v_.js
+\_v\_.js
 ======
 
 Validator for tFormer.js (http://tformerjs.com)

@@ -6,287 +6,144 @@
  */
 "use strict";
 
-(function ( window, document, undefined ) {
-
-	/**
-	 * _v_ - Validator
-	 */
-	var regex = {
-		ruleArray   : /^\[(.+)\]$/,
-		email       : /^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))$/i,
-		url         : /^(https?|s?ftp):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i,
-		alpha       : /^[a-z]+$/i,
-		alphaNumeric: /^[a-z0-9]+$/i,
-		alphaDash   : /^[a-z_-]+$/i,
-		alphaNumDash: /^[a-z0-9_-]+$/i,
-		ip          : /^((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){3}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})$/i,
-		base64      : /^(?:[A-Za-z0-9+\/]{4})*(?:[A-Za-z0-9+\/]{2}==|[A-Za-z0-9+\/]{3}=|[A-Za-z0-9+\/]{4})$/,
-		integer     : /^\-?[0-9]+$/,
-		numeric     : /^[0-9]+$/,
-		natural     : /^[0-9]+$/i,
-		decimal     : /^\-?[0-9]*\.?[0-9]+$/,
-
-		card                 : /^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\d{3})\d{11})$/,
-		card_visa            : /^4[0-9]{12}(?:[0-9]{3})?$/,
-		card_mastercard      : /^5[1-5][0-9]{14}$/,
-		card_american_express: /^3[47][0-9]{13}$/,
-		card_discover        : /^6(?:011|5[0-9]{2})[0-9]{12}$/,
-		card_jcb             : /^(?:2131|1800|35\d{3})\d{11}$/
-	};
-
-	var keys = {
-		'*'  : 'required',
-		'@'  : 'isValidEmail',
-		'@s' : 'isValidEmails',
-		'ip' : 'isValidIP',
-		'b64': 'isValidBase64',
-
-		'url': 'isValidUrl',
-
-		'c' : 'isValidCard',
-		'cv': 'isValidVisa',
-		'cm': 'isValidMastercard',
-		'ca': 'isValidAmex',
-		'cd': 'isValidDiscover',
-
-		'a'  : 'isAlpha',
-		'a1' : 'isAlphaNumeric',
-		'a1_': 'isAlphaNumDash',
-		'a_' : 'isAlphaDash',
-
-		'num': 'isNumeric',
-		'int': 'isInteger',
-		'dec': 'isDecimal',
-		'nat': 'isNatural',
-
-		'l=' : 'lengthEq',
-		'l>' : 'lengthMore',
-		'l>=': 'lengthEqOrMore',
-		'l<' : 'lengthLess',
-		'l<=': 'lengthEqOrLess',
-
-		'lr=': 'lengthInRange',
-
-		'reg=': 'validateRegular',
-
-		'r=': 'inRange',
-
-		'>=': 'greaterOrEq',
-		'<=': 'lessOrEq',
-		'>' : 'greaterThen',
-		'<' : 'lessThen',
-		'=#': 'matchesToId',
-		'=' : 'matchesTo',
-
-		'!=': 'notMatches',
-		'!' : 'notContain',
-
-		'D=': 'isValidDate'
-	};
-	var rules_order = ['lr=', 'l=', 'l>=', 'l<=', 'l>', 'l<', 'reg=', 'r=', '>=', '<=', '>', '<', '=#', '=', '!=', '!', 'D='];
+(function ( window, document, undefined ){
 
 	/**
 	 * Validator constructor
 	 *
 	 * @constructor
-	 * @param value
+	 * @param {!string} value
 	 * @returns {*}
 	 * @private
 	 */
-	var _v_ = function ( value ) {
+	var _v_ = function ( value ){
 		if ( !(this instanceof _v_) ) {
 			return new _v_( value );
 		}
 		this.value = value;
+		this.separator = ' ';
+		this.rule = '';
+
+		this.parsedRules = [];
+
 		return this;
 	};
 	var _v_proto = _v_.prototype;
 
-	_v_proto.required = function () {
-		return (this.value.length !== 0) ? true : false;
-	};
-	_v_proto.validateRegular = function ( regExpression ) {
-		var reg = new RegExp( regExpression, 'i' );
-		return reg.test( this.value );
-	};
-
-	_v_proto.isValidUrl = function () {
-		return regex.url.test( this.value );
-	};
-
-	_v_proto.isValidEmail = function () {
-		return regex.email.test( this.value.replace( /^\s+|\s+$/g, '' ) );
+	/**
+	 * sets rules separator
+	 * @param separator
+	 * @returns {*}
+	 */
+	_v_proto.separate = function ( separator ){
+		this.separator = separator;
+		this.rules( this.rule ); // pars rules again
+		return this;
 	};
 
-	_v_proto.isValidEmails = function ( separator ) {
-		var emails = this.value.split( separator || ',' );
-		for ( var i = 0; i < emails.length; i++ ) {
-			if ( !_v_( emails[i] ).isValidEmail() ) {
-				return false;
+	/**
+	 * set rules to validator
+	 * @param rules
+	 * @returns {*}
+	 */
+	_v_proto.rules = function ( rules ){
+		this.rule = rules;
+		this.parseRules();
+		return this;
+	};
+
+	/**
+	 * add rules to existed rules str
+	 * @param rule
+	 * @returns {*}
+	 */
+	_v_proto.addRule = function ( rule ){
+		var parsed = this.parsedRules;
+		var rule_v_ = _v_().rules( rule ).parsedRules;
+
+		for ( var key in rule_v_ ) {
+			var rule = rule_v_[key];
+			if ( !rule ) {
+				parsed[key] = rule;
+				continue;
 			}
-		}
-		return true;
-	};
-
-	_v_proto.isValidCard = function () {
-		return regex.card.test( this.value );
-	};
-
-	_v_proto.isValidVisa = function () {
-		return regex.card_visa.test( this.value );
-	};
-
-	_v_proto.isValidMastercard = function () {
-		return regex.card_mastercard.test( this.value );
-	};
-
-	_v_proto.isValidAmex = function () {
-		return regex.card_american_express.test( this.value );
-	};
-
-	_v_proto.isValidDiscover = function () {
-		return regex.card_discover.test( this.value );
-	};
-
-	_v_proto.isAlpha = function () {
-		return regex.alpha.test( this.value );
-	};
-
-	_v_proto.isAlphaNumeric = function () {
-		return regex.alphaNumeric.test( this.value );
-	};
-
-	_v_proto.isAlphaDash = function () {
-		return regex.alphaDash.test( this.value );
-	};
-
-	_v_proto.isAlphaNumDash = function () {
-		return regex.alphaNumDash.test( this.value );
-	};
-
-	_v_proto.isValidIP = function () {
-		return regex.ip.test( this.value );
-	};
-
-	_v_proto.isValidBase64 = function () {
-		return regex.base64.test( this.value );
-	};
-
-	_v_proto.isInteger = function () {
-		return regex.integer.test( this.value );
-	};
-
-	_v_proto.isDecimal = function () {
-		return regex.decimal.test( this.value );
-	};
-
-	_v_proto.isNumeric = function () {
-		return regex.numeric.test( this.value );
-	};
-
-	_v_proto.isNatural = function () {
-		return regex.natural.test( this.value );
-	};
-
-	_v_proto.lengthEq = function ( length ) {
-		if ( typeof(length) == 'number' || typeof(length) == 'string' ) {
-			return this.value.length == length;
-		} else {
-			for ( var key in length ) {
-				if ( this.value.length == length[key] ) return true;
-			}
-		}
-		return false;
-	};
-
-	_v_proto.lengthMore = function ( length ) {
-		return this.value.length > length;
-	};
-
-	_v_proto.lengthEqOrMore = function ( length ) {
-		return this.value.length >= length;
-	};
-
-	_v_proto.lengthLess = function ( length ) {
-		return this.value.length < length;
-	};
-
-	_v_proto.lengthEqOrLess = function ( length ) {
-		return this.value.length <= length;
-	};
-
-	_v_proto.lengthInRange = function ( range ) {
-		return (this.value.length >= range[0] && this.value.length <= range[1]);
-	};
-
-	_v_proto.greaterThen = function ( value ) {
-		return (_v_( this.value.toString() ).isDecimal() && parseFloat( this.value ) > parseFloat( value )) ? true : false;
-	};
-
-	_v_proto.greaterOrEq = function ( value ) {
-		return (_v_( this.value.toString() ).isDecimal() && parseFloat( this.value ) >= parseFloat( value )) ? true : false;
-	};
-
-	_v_proto.lessThen = function ( value ) {
-		return (_v_( this.value.toString() ).isDecimal() && parseFloat( this.value ) < parseFloat( value )) ? true : false;
-	};
-
-	_v_proto.lessOrEq = function ( value ) {
-		return (_v_( this.value.toString() ).isDecimal() && parseFloat( this.value ) <= parseFloat( value )) ? true : false;
-	};
-
-	_v_proto.inRange = function ( value ) {
-		return (_v_( this.value.toString() ).isDecimal() && parseFloat( this.value ) >= parseFloat( value[0] ) && parseFloat( this.value ) <= parseFloat( value[1] )) ? true : false;
-	};
-
-	_v_proto.matchesToId = function ( value ) {
-		if ( typeof value == 'string' || typeof value == 'number' ) {
-			value = value.split( ' ' );
-			var el = document.getElementById( value );
-			if ( !el ) {
-				return false;
-			}
-			return this.value == el.value;
-		} else {
-			for ( var i = 0; i < value.length; i++ ) {
-				var el = document.getElementById( value[i] );
-				if ( el && this.value == el.value ) {
-					return true;
-				}
-			}
-		}
-		return false;
-	};
-
-	_v_proto.matchesTo = function ( value ) {
-		if ( typeof value == 'string' || typeof value == 'number' ) {
-			return this.value == value;
-		} else {
-			for ( var i = 0, valueLength = value.length; i < valueLength; i++ ) {
-				if ( value[i].indexOf( '#' ) === 0 ) {
-					var el = document.getElementById( value[i].replace( '#', '' ) );
-					if ( !el ) {
-						return false;
+			// has params and is in defined rules
+			if ( rule && parsed.hasOwnProperty( key ) ) {
+				// params is array
+				parsed[key] = __toArray( parsed[key] );
+				rule = __toArray( rule );
+				for ( var i = 0, r_v_l = rule.length; i < r_v_l; i++ ) {
+					if ( __inArray( parsed[key], rule[i] ) !== -1 ) {
+						continue;
 					}
-					if ( this.value == el.value ) return true;
-				} else {
-					if ( this.value == value[i] ) return true;
+					parsed[key].push( rule[i] );
 				}
+			} else {
+				parsed[key] = rule;
 			}
 		}
-		return false;
+
+		this.rule = __rulesStr( this.parsedRules, this.separator );
+		return this;
 	};
 
-	_v_proto.notMatches = function ( value ) {
-		return !(_v_( this.value ).matchesTo( value ));
+	/**
+	 * Delete rule from validator rules
+	 * @param rule
+	 * @returns {*}
+	 */
+	_v_proto.delRule = function ( rule ){
+		var parsed = this.parsedRules;
+		var rule_v_ = _v_().rules( rule ).parsedRules;
+		for ( var key in rule_v_ ) {
+			var rules = rule_v_[key];
+			if (!parsed.hasOwnProperty(key)) {
+				continue;
+			}
+			if ( rules === undefined) {
+				delete parsed[key];
+				continue;
+			}
+
+			parsed[key] = __toArray( parsed[key] );
+			rules = __toArray( rules );
+			for ( var i = 0, r_l = rules.length; i < r_l; i++ ) {
+				var index = __inArray( parsed[key], rules[i] );
+				if ( ~index ) {
+					parsed[key].splice( index, 1 );
+				}
+			}
+			if ( parsed[key].length === 0 ) {
+				delete parsed[key];
+			} else if ( parsed[key].length === 1 ) {
+				parsed[key] = parsed[key][0];
+			}
+		}
+		this.rule = __rulesStr( this.parsedRules, this.separator );
+		return this;
 	};
 
-	_v_proto.notContain = function ( value ) {
-		if ( typeof value == 'string' || typeof value == 'number' ) {
-			return (this.value).toString().indexOf( value.toString() ) === -1;
-		} else {
-			for ( var key in value ) {
-				if ( ~(this.value).toString().indexOf( value[key].toString() ) ) {
+	/**
+	 * check has validator such rule or not
+	 * @param rules
+	 * @returns {boolean}
+	 */
+	_v_proto.hasRule = function ( rules ){
+		var rule_v_ = _v_().rules( rules ).parsedRules;
+		var parsed = this.parsedRules;
+		for ( var key in rule_v_ ) {
+			var rule = rule_v_[key];
+			if ( !rule ) {
+				if ( !parsed.hasOwnProperty( key ) ) {
+					return false;
+				} else {
+					continue;
+				}
+			}
+			parsed[key] = __toArray( parsed[key] );
+			rule = __toArray( rule );
+			for ( var i = 0, r_l = rule.length; i < r_l; i++ ) {
+				if ( __inArray( parsed[key], rule[i] ) === -1 ) {
 					return false;
 				}
 			}
@@ -294,93 +151,347 @@
 		return true;
 	};
 
-	_v_proto.isValidDate = function ( date_formar ) {
-		return (__toDate( this.value, date_formar )) ? true : false;
-	};
 
-	_v_proto.validateMethods = function ( separator ) {
-		var validate_options = _v_( this.value ).parseValidateOptions( separator );
-		var validate_methods = [];
-		for ( var i = 0, vo_length = validate_options.length; i < vo_length; i++ ) {
-			validate_methods[i] = validate_options[i][0];
-		}
-		return validate_methods;
-	};
+	/**
+	 * parse validator rules and return object with rule keys and their values
+	 * @returns {{}}
+	 */
+	_v_proto.parseRules = function (){
+		var rules = this.rule.split( this.separator );
+		var parsed = {};
+		var keys = this.keys;
 
-	_v_proto.parseValidateOptions = function ( separator ) {
-		var options = this.value.split( separator || ' ' ),
-			parsed_options = [];
-
-		for ( var i = 0; i < options.length; i++ ) {
-			var option = options[i],
-				func = '',
-				param = '';
-
+		for ( var i = 0, rules_length = rules.length; i < rules_length; i++ ) {
+			var option = rules[i], func, rule, params = undefined;
 			if ( keys[ option ] ) {
 				func = keys[ option ];
+				rule = option;
 			} else {
-				for ( var j = 0, roLength = rules_order.length; j < roLength; j++ ) {
-					if ( option.indexOf( rules_order[j] ) === 0 ) {
-						param = option.replace( rules_order[j], '' );
-						func = keys[rules_order[j]];
+				var keys_order = this.keys_order;
+				for ( var j = 0, koLength = keys_order.length; j < koLength; j++ ) {
+					var key = keys_order[j];
+					if ( option.indexOf( key ) === 0 ) {
+						rule = key;
+						params = option.replace( key, '' );
+						var paramArray = (/^\[(.+)\]$/).exec( params );
+						if ( paramArray ) params = paramArray[1].split( ',' ); // TODO: params separator
+						func = this.keys[rule];
 						break;
 					}
 				}
 			}
 			if ( func ) {
-				parsed_options.push( [func, param] );
+				parsed[rule] = params;
 			}
 		}
-		return parsed_options;
+		this.parsedRules = parsed;
+		this.rule = __rulesStr( parsed, this.separator );
+		return parsed;
 	};
 
 	/**
-	 *
-	 * @param options
-	 * options.value_separator
-	 * options.rule_separator
-	 * options.result
-	 * @returns {*}
+	 * main validate function.
+	 * @param rules
+	 * @returns {boolean}
 	 */
-	_v_proto.validateWithRules = function ( options ) {
-		var rules = (typeof options == 'string') ? options : options.rules;
-		var value_separator = options.value_separator || ',';
-		var rule_separator = options.rule_separator || ' ';
-		var result = options.result;
-		if ( !rules ) {
-			return true;
+	_v_proto.validate = function ( rules ){
+		if ( rules ) {
+			this.rules( rules );
 		}
-		var parsedRules = _v_( rules ).parseValidateOptions( rule_separator );
-		var errors = [];
-
-		for ( var i = 0, rulesLength = parsedRules.length; i < rulesLength; i++ ) {
-			// request goes in the end
-			if ( parsedRules[i][0] == 'request' || !parsedRules[i][0] ) {
-				continue;
+		var parsed = this.parsedRules;
+		for ( var rule in parsed ) {
+			try {
+			if ( !this.keys[rule].call( this, parsed[rule] ) ) {
+				return false;
 			}
-
-			var method = parsedRules[i][0],
-				param = parsedRules[i][1];
-
-			// get param options as array
-			var paramArray = regex.ruleArray.exec( param );
-			if ( paramArray ) param = paramArray[1].split( ',' );
-
-			if ( !_v_( (this.value).toString() )[method]( param || value_separator ) ) {
-				errors.push( [method, param] );
-			}
+		} catch (e) {
+			return false;
 		}
-
-		if ( result == 'array' ) {
-			return errors;
 		}
-		return (errors.length > 0) ? false : true;
+		return true;
 	};
+
+
+	/**
+	 * method for extending _v_ with new rules and validate functions
+	 * @param rule
+	 * @param func
+	 */
+	_v_proto.extend = function ( rule, func ){
+		_v_proto.keys[rule] = func
+		_v_proto.keys_order.push( rule );
+
+		_v_proto.keys_order = this.keys_order.sort( function ( a, b ){
+			return b.length - a.length;
+		} );
+		return this;
+	};
+
+	_v_proto.keys = {}; // object with rules
+	_v_proto.keys_order = []; // array with ordered rules
 
 	window._v_ = _v_;
 
 
-	// private stuff and helper functions
+	/**
+	 * Rules extends
+	 * ---------- ---------- ---------- ---------- ----------
+	 */
+	var rules = {
+
+		// required
+		'*'   : function (){
+			return this.value.length !== 0;
+		},
+
+		// alpha
+		'a'   : function (){
+			return (/^[a-z]+$/i).test( this.value );
+		},
+
+		// alpha numeric
+		'a1'  : function (){
+			return (/^[a-z0-9]+$/i).test( this.value );
+		},
+
+		// alpha dash
+		'a_'  : function (){
+			return (/^[a-z_-]+$/i).test( this.value );
+		},
+
+		// alpha numeric dash
+		'a1_' : function (){
+			return (/^[a-z0-9_-]+$/i).test( this.value );
+		},
+
+		// email
+		'@'   : function (){
+			var mail_regexp = /^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))$/i;
+			return mail_regexp.test( this.value );
+		},
+
+		// emails
+		'@s'  : function (){
+			var emails = this.value.split( ',' );
+			for ( var i = 0; i < emails.length; i++ ) {
+				if ( !_v_( emails[i] ).validate( '@' ) ) {
+					return false;
+				}
+			}
+			return true;
+		},
+
+		// ip address
+		'ip'  : function (){
+			return (/^((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){3}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})$/i).test( this.value );
+		},
+
+		// base65 string
+		'b64' : function (){
+			return (/^(?:[A-Za-z0-9+\/]{4})*(?:[A-Za-z0-9+\/]{2}==|[A-Za-z0-9+\/]{3}=|[A-Za-z0-9+\/]{4})$/).test( this.value );
+		},
+
+		// URL
+		'url' : function (){
+			return (/^(https?|s?ftp):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i).test( this.value );
+		},
+
+		// integer
+		'int' : function (){
+			return (/^\-?[0-9]+$/).test( this.value );
+		},
+
+		// Numeric
+		'num' : function (){
+			return (/^[0-9]+$/).test( this.value );
+		},
+
+		// Decimal
+		'dec' : function (){
+			return (/^\-?[0-9]*\.?[0-9]+$/).test( this.value );
+		},
+
+		// Natural
+		'nat' : function (){
+			return (/^[0-9]+$/i).test( this.value );
+		},
+
+		// length equals to
+		'l='  : function ( length ){
+			if ( typeof(length) == 'number' || typeof(length) == 'string' ) {
+				return this.value.length == length;
+			} else {
+				for ( var key in length ) {
+					if ( this.value.length == length[key] ) return true;
+				}
+			}
+			return false;
+		},
+
+		// length more than
+		'l>'  : function ( length ){
+			return this.value.length > length;
+		},
+
+		// length more or equals to
+		'l>=' : function ( length ){
+			return this.value.length >= length;
+		},
+
+		// length less than
+		'l<'  : function ( length ){
+			return this.value.length < length;
+		},
+
+		// length less or equals to
+		'l<=' : function ( length ){
+			return this.value.length <= length;
+		},
+
+		// length is in range
+		'lr=' : function ( range ){
+			return (this.value.length >= range[0] && this.value.length <= range[1]);
+		},
+
+		// is greater than
+		'>'   : function ( value ){
+			var test = this.value;
+			return (_v_( test ).validate( 'dec' ) && parseFloat( test ) > parseFloat( value ));
+		},
+
+		// is greater or equals to
+		'>='  : function ( value ){
+			var test = this.value;
+			return (_v_( test ).validate( 'dec' ) && parseFloat( test ) >= parseFloat( value ));
+		},
+
+		// is less than
+		'<'   : function ( value ){
+			var test = this.value;
+			return (_v_( test ).validate( 'dec' ) && parseFloat( test ) < parseFloat( value ));
+		},
+
+		// is less or equals to
+		'<='  : function ( value ){
+			var test = this.value;
+			return (_v_( test ).validate( 'dec' ) && parseFloat( test ) <= parseFloat( value ));
+		},
+
+		// is in range
+		'r='  : function ( value ){
+			var test = this.value;
+			return (_v_( test ).validate( 'dec' ) && parseFloat( test ) >= parseFloat( value[0] ) && parseFloat( test ) <= parseFloat( value[1] ));
+		},
+
+		// regular expression validation
+		'reg=': function ( regExpression ){
+			var reg = new RegExp( regExpression, 'i' );
+			return reg.test( this.value );
+		},
+
+		// matches to
+		'='   : function ( value ){
+			var test = this.value;
+			if ( typeof value == 'string' || typeof value == 'number' ) {
+				return test == value;
+			} else {
+				for ( var i = 0, valueLength = value.length; i < valueLength; i++ ) {
+					if ( value[i].indexOf( '#' ) === 0 ) {
+						var el = __getElById( value[i].replace( '#', '' ) );
+						if ( !el ) {
+							return false;
+						}
+						if ( test == el.value ) return true;
+					} else {
+						if ( test == value[i] ) return true;
+					}
+				}
+			}
+			return false;
+		},
+
+		// matches to id
+		'=#'  : function ( value ){
+			var test = this.value;
+			if ( typeof value == 'string' || typeof value == 'number' ) {
+				value = value.split( ' ' );
+				var el = __getElById( value );
+				if ( !el ) {
+					return false;
+				}
+				return test == el.value;
+			} else {
+				for ( var i = 0; i < value.length; i++ ) {
+					var el = __getElById( value[i] );
+					if ( el && test == el.value ) {
+						return true;
+					}
+				}
+			}
+			return false;
+		},
+
+		// not matches to
+		'!='  : function ( value ){
+			value = (__isArray( value )) ? '[' + value.join( ',' ) + ']' : value; // TODO: value separator
+			return !(_v_( this.value ).validate( '=' + value ));
+		},
+
+		// not contain
+		'!'   : function ( value ){
+			if ( typeof value == 'string' || typeof value == 'number' ) {
+				return (this.value).toString().indexOf( value.toString() ) === -1;
+			} else {
+				for ( var key in value ) {
+					if ( ~(this.value).toString().indexOf( value[key].toString() ) ) {
+						return false;
+					}
+				}
+			}
+			return true;
+		},
+
+		// credit card (all cards type)
+		'c'   : function ( value ){
+			return (/^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\d{3})\d{11})$/).test( this.value );
+		},
+
+		// visa card
+		'cv'  : function ( value ){
+			return (/^4[0-9]{12}(?:[0-9]{3})?$/).test( this.value );
+		},
+
+		// master card
+		'cm'  : function ( value ){
+			return (/^5[1-5][0-9]{14}$/).test( this.value );
+		},
+
+		// american express card
+		'ca'  : function ( value ){
+			return (/^3[47][0-9]{13}$/).test( this.value );
+		},
+
+		// discover card
+		'cd'  : function ( value ){
+			return (/^6(?:011|5[0-9]{2})[0-9]{12}$/).test( this.value );
+		},
+
+		// date format validation
+		'D='  : function ( format ){
+			return !!(__toDate( this.value, format ));
+		}
+	};
+
+	// add extends
+	for ( var key in rules ) {
+		_v_().extend( key, rules[key] );
+	}
+
+
+	/**
+	 * Helpers
+	 * ---------- ---------- ---------- ---------- ----------
+	 */
 
 	// Date functions
 	var __dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -392,7 +503,7 @@
 	var __shortMonthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 	var __monthChars = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
 
-	var __daysInMonth = function ( month, year ) {
+	var __daysInMonth = function ( month, year ){
 		// If February, check for leap year
 		if ( (month == 1) && (((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0)) ) {
 			return 29;
@@ -428,7 +539,7 @@
 	 * @param {string} format The basic format of the string.
 	 * @return {Date} The string as a date object.
 	 */
-	var __toDate = function ( date, format ) {
+	var __toDate = function ( date, format ){
 		// Default values set to midnight Jan 1 of the current year.
 		var year = new Date().getFullYear(),
 			month = 0,
@@ -602,13 +713,24 @@
 
 
 	/**
-	 * is array function
-	 * @returns {boolean}
+	 * Simple getElementByID function
+	 * @param {string} id - id of HTML element
+	 * @returns {HTMLElement}
+	 * @private
 	 */
-	var __isArray = function ( obj ) {
+	var __getElById = function ( id ){
+		return document.getElementById( id );
+	}
+
+	/**
+	 * Check is obj is array or not
+	 * @param obj - element we should check
+	 * @returns {boolean}
+	 * @private
+	 */
+	var __isArray = function ( obj ){
 		return Object.prototype.toString.call( obj ) == '[object Array]';
 	};
-
 
 	/**
 	 * detects is defined array has some value
@@ -617,7 +739,7 @@
 	 * @returns {number}
 	 * @private
 	 */
-	var __inArray = function ( array, value ) {
+	var __inArray = function ( array, value ){
 		var index = -1,
 			length = array ? array.length : 0;
 		while ( ++index < length ) {
@@ -627,13 +749,54 @@
 		}
 		return -1;
 	};
+	window.__inArray = __inArray;
+
 
 	/**
-	 * is array function
-	 * @returns {boolean}
+	 * convert item to Array.
+	 * @param el
+	 * @returns {Array}
+	 * @private
 	 */
-	var __isObject = function ( obj ) {
-		return toString.call( obj ) == '[object Object]';
+	var __toArray = function ( el ){
+		return (!__isArray( el )) ? [el] : el;
+	}
+
+	/**
+	 * convert rules object to string
+	 * @param obj
+	 * @param separator
+	 * @returns {string}
+	 * @private
+	 */
+	var __rulesStr = function ( obj, separator ){
+		separator = separator || ' ';
+		var str = separator;
+		for ( var key in obj ) {
+			var rules = obj[key];
+			if ( __isArray( rules )){
+				rules = __clearArray(rules);
+			}
+			if ( !rules ) {
+				str += key + separator;
+			} else if ( __isArray( rules ) ) {
+				str += key + '[' + rules.join( ',' ) + ']' + separator; // TODO: rule values separator
+			} else {
+				str += key + rules + separator;
+			}
+		}
+		str = str.substr( separator.length, str.length - separator.length * 2 );
+		return str;
 	};
+
+	var __clearArray = function(arr){
+		var new_arr = [];
+		for (var i = 0, a_l = arr.length; i < a_l; i++) {
+			if (arr[i]) {
+				new_arr.push(arr[i]);
+			}
+		}
+		return (new_arr && new_arr.length > 1) ? new_arr : new_arr[0];
+	}
 
 })( window, document );

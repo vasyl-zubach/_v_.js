@@ -1,15 +1,135 @@
-describe( "Test Validator (_v_) methods", function () {
+describe( "_v_ methods", function () {
 
+	describe( "separate", function () {
+		it( 'set the separator symbol to _v_ rules', function () {
+			expect( _v_().separate( '|' ).rules( '*|@' ).rule ).toBe( '*|@' );
+		} );
+		it( 'rules excepts only values extended to _v_ object', function () {
+			expect( _v_().rules( 'some rules' ).rule ).not.toBe( 'some rules' );
+		} );
+	} );
 
-	describe( '`*`, Required', function () {
+	describe( "rules", function () {
+		it( 'set validation rules', function () {
+			expect( _v_().rules( '* @' ).rule ).toBe( '* @' );
+		} );
+		it( 'rules excepts only values extended to _v_ object', function () {
+			expect( _v_().rules( 'some rules' ).rule ).not.toBe( 'some rules' );
+		} );
+	} );
+
+	describe( "addRule", function () {
+		it( 'single rule add', function () {
+			expect( _v_( 'test' ).rules( '*' ).addRule( '@' ).parsedRules.hasOwnProperty( '@' ) ).toBe( true );
+		} );
+
+		it( 'single rule added to allready defined single rule. result is multiple rule', function () {
+			expect( _v_( 'test' ).rules( '=3' ).addRule( '=4' ).parsedRules['='].join( ',' ) ).toBe( '3,4' );
+		} );
+
+		it( 'single rule added to allready defined multiple rule', function () {
+			expect( _v_( 'test' ).rules( '=[3,4]' ).addRule( '=5' ).parsedRules['='].join( ',' ) ).toBe( '3,4,5' );
+		} );
+
+		it( 'multiple rule added to allready defined single rule', function () {
+			expect( _v_( 'test' ).rules( '=3' ).addRule( '=[4,5]' ).parsedRules['='].join( ',' ) ).toBe( '3,4,5' );
+		} );
+
+		it( 'multiple rule added to allready defined multiple rule', function () {
+			expect( _v_( 'test' ).rules( '=[3,4]' ).addRule( '=[3,4,5]' ).parsedRules['='].join( ',' ) ).toBe( '3,4,5' );
+		} );
+	} );
+
+	describe( "delRule", function () {
+
+		it( 'deleting single rule', function () {
+			expect( _v_( 'test' ).rules( '*' ).delRule( '*' ).rule ).toBe( '' );
+			expect( _v_( 'test' ).rules( '* @ =10' ).delRule( '*' ).rule ).toBe( '@ =10' );
+		} );
+
+		it( 'fully deleting rule that has compare value', function () {
+			expect( _v_( 'test' ).rules( '* =[12,13,14]' ).delRule( '=' ).rule ).toBe( '*' );
+			expect( _v_( 'test' ).rules( '* >10' ).delRule( '>' ).rule ).toBe( '*' );
+		} );
+
+		it( 'delete one values from multiple rule', function () {
+			expect( _v_( 'test' ).rules( '* =[12,13,14]' ).delRule( '=12' ).rule ).toBe( '* =[13,14]' );
+		} );
+
+		it( 'delete multiple values from multiple rule', function () {
+			expect( _v_( 'test' ).rules( '* =[12,13,14,15]' ).delRule( '=[12,15]' ).rule ).toBe( '* =[13,14]' );
+		} );
+
+		it( 'delete one or multiple values from multiple rule ald left one value', function () {
+			expect( _v_( 'test' ).rules( '* =[12,13,14,15]' ).delRule( '=[12,13,15]' ).rule ).toBe( '* =14' );
+		} );
+
+		it( 'delete all multiple values from rule', function () {
+			expect( _v_( 'test' ).rules( '* =[12,13,14,15]' ).delRule( '=[12,13,15,14]' ).rule ).toBe( '*' );
+		} );
+
+		it('delete chain', function(){
+			_v_('test string').rules('* a').delRule('=10');
+			expect( _v_('test string').rules('* a').delRule('=10').rule ).toBe( '* a' );
+		})
+
+	} );
+
+	describe( "hasRule", function () {
+		xit( 'check if such rule exist', function () {
+			expect( _v_( 'some' ).rules( "=[12,13]" ).hasRule( '=' ) ).toBeTruthy();
+		} );
+		xit( 'check if such rule with such value exist', function () {
+			expect( _v_( 'some' ).rules( "=[12,13]" ).hasRule( '=12' ) ).toBeTruthy();
+			expect( _v_( 'some' ).rules( "=[12,13]" ).hasRule( '=13' ) ).toBeTruthy();
+			expect( _v_( 'some' ).rules( "=[12,13]" ).hasRule( '=[12,13]' ) ).toBeTruthy();
+			expect( _v_( 'some' ).rules( "=[12,13]" ).hasRule( '=[12,13,14]' ) ).toBeFalsy();
+		} );
+		it( 'check few rules', function () {
+			expect( _v_( 'some' ).rules( "* @ =[12,13]" ).hasRule( '=12 *' ) ).toBeTruthy();
+			expect( _v_( 'some' ).rules( "@ * =[12,13]" ).hasRule( '=13 * @' ) ).toBeTruthy();
+			expect( _v_( 'some' ).rules( "@ >10 =[12,13]" ).hasRule( '>10 @ =13' ) ).toBeTruthy();
+			expect( _v_( 'some' ).rules( "* l>5 =[12,13]" ).hasRule( '= *' ) ).toBeTruthy();
+		} );
+	} );
+
+	describe( "parseRules", function () {
+		it( 'parse rules string and return object with rules keys and their values', function () {
+			var test = _v_( 'as' ).rules( '* @ l>10' ).parseRules();
+			expect( test.hasOwnProperty( '*' ) ).toBeTruthy();
+			expect( test.hasOwnProperty( '@' ) ).toBeTruthy();
+			expect( test.hasOwnProperty( 'l>' ) ).toBeTruthy();
+			expect( test['l>'] ).toBe( '10' );
+		} );
+	} );
+
+	describe( "validate", function () {
+		it( 'validate with empty rules - true', function () {
+			expect( _v_( 'some' ).validate() ).toBeTruthy();
+		} )
+	} );
+
+	describe( "extend", function () {
+		it( 'extends main _v_ object with new rules and functions for validation', function () {
+			// as it already used we can check keys;
+			expect( _v_().keys.hasOwnProperty( '*' ) ).toBeTruthy();
+			expect( _v_().keys.hasOwnProperty( 'reg=' ) ).toBeTruthy();
+		} );
+	} );
+
+} );
+
+describe( "_v_ rules", function () {
+
+	describe( "* - required", function () {
 		it( 'field should not be empty', function () {
-			expect( new _v_( '1' ).validateWithRules( '*' ) ).toBe( true );
-			expect( new _v_( '' ).validateWithRules( '*' ) ).toBe( false );
+			expect( _v_( '1' ).validate( '*' ) ).toBe( true );
+			expect( _v_( '' ).validate( '*' ) ).toBe( false );
 		} );
 	} );
 
 
-	describe( '`a`, isAlpha():', function () {
+	describe( "a - alpha", function () {
 		it( 'should contain only a-zA-Z symbols', function () {
 			var test = ('ABCDEFGHIJKLMNOPQRSTUVWXYZ' + 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.toLowerCase()).split( '' );
 
@@ -20,14 +140,13 @@ describe( "Test Validator (_v_) methods", function () {
 					var symbol = Math.floor( Math.random() * test.length - 5 );
 					str += test[symbol];
 				}
-				expect( new _v_( str ).isAlpha() ).toBe( true );
-				expect( new _v_( str ).validateWithRules( 'a' ) ).toBe( true );
+				expect( _v_( str ).validate( 'a' ) ).toBe( true );
 			}
 		} );
 	} );
 
 
-	describe( '`a1`, isAlphaNumeric():', function () {
+	describe( "a1 - alpha and numeric", function () {
 		it( 'can contain symbols and numbers', function () {
 			var test = ('ABCDEFGHIJKLMNOPQRSTUVWXYZ' + '0123456789' + 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.toLowerCase()).split( '' );
 
@@ -38,14 +157,13 @@ describe( "Test Validator (_v_) methods", function () {
 					var symbol = Math.floor( Math.random() * test.length - 5 );
 					str += test[symbol];
 				}
-				expect( new _v_( str ).isAlphaNumeric() ).toBe( true );
-				expect( new _v_( str ).validateWithRules( 'a1' ) ).toBe( true );
+				expect( _v_( str ).validate( 'a1' ) ).toBe( true );
 			}
 		} );
 	} );
 
 
-	describe( '`a_`, isAlphaDash():', function () {
+	describe( "a_ - alpha and dash", function () {
 		it( 'can contain A-Za-z and _ symbol', function () {
 			var test = ('ABCDEFGHIJKLMNOPQRSTUVWXYZ' + 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.toLowerCase()).split( '' ).join( '_' ).split( '' );
 
@@ -56,14 +174,13 @@ describe( "Test Validator (_v_) methods", function () {
 					var symbol = Math.floor( Math.random() * test.length - 5 );
 					str += test[symbol];
 				}
-				expect( new _v_( str ).isAlphaDash() ).toBe( true );
-				expect( new _v_( str ).validateWithRules( 'a_' ) ).toBe( true );
+				expect( _v_( str ).validate( 'a_' ) ).toBe( true );
 			}
 		} );
 	} );
 
 
-	describe( '`a1_`, isAlphaNumDash():', function () {
+	describe( "a1_ - alpha, numeric and dash", function () {
 		it( 'can contain A-Za-z and _ symbol', function () {
 			var test = ('ABCDEFGHIJKLMNOPQRSTUVWXYZ' + 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.toLowerCase()).split( '' ).join( '_' ).split( '' );
 
@@ -74,391 +191,277 @@ describe( "Test Validator (_v_) methods", function () {
 					var symbol = Math.floor( Math.random() * test.length - 5 );
 					str += test[symbol];
 				}
-				expect( new _v_( str ).isAlphaNumDash() ).toBe( true );
-				expect( new _v_( str ).validateWithRules( 'a1_' ) ).toBe( true );
+				expect( _v_( str ).validate( 'a1_' ) ).toBe( true );
 			}
 		} );
 	} );
 
 
-	describe( "`@`, isValidEmail():", function () {
+	describe( "@ - validate email", function () {
 		it( "should contain only 1 '@' symbol", function () {
-			var test1 = 'i@@macpaw.com',
-				test2 = 'i@tjrus.com';
-			expect( new _v_( test1 ).isValidEmail() ).not.toBe( true );
-			expect( new _v_( test2 ).isValidEmail() ).toBe( true );
-			expect( new _v_( test1 ).validateWithRules( '@' ) ).not.toBe( true );
-			expect( new _v_( test2 ).validateWithRules( '@' ) ).toBe( true );
+			expect( _v_( 'i@@macpaw.com' ).validate( '@' ) ).not.toBe( true );
+			expect( _v_( 'i@tjrus.com' ).validate( '@' ) ).toBe( true );
 		} );
 	} );
 
 
-	describe( "`@s`, isValidEmails():", function () {
+	describe( "@s - validate emails", function () {
 		it( "separated with ',' by default", function () {
-			var test = 'tjrus@macpaw.com,i@tjrus.com';
-			expect( new _v_( test ).isValidEmails() ).toBe( true );
-			expect( new _v_( test ).validateWithRules( '@s' ) ).toBe( true );
-		} );
-
-		it( "can be separated with any other symbol by using isValidEmails(separator)", function () {
-			var test = 'tjrus@macpaw.com|i@tjrus.com';
-			expect( new _v_( test ).isValidEmails( '|' ) ).toBe( true );
-			expect( new _v_( test ).validateWithRules( {rules: '@s', value_separator: '|' } ) ).toBe( true );
+			expect( _v_( 'tjrus@macpaw.com,i@tjrus.com' ).validate( '@s' ) ).toBe( true );
 		} );
 	} );
 
 
-	describe( "`ip`, isValidIP():", function () {
+	describe( "ip - validate ip address", function () {
 		it( "should be valid IP address", function () {
-			var test = '123.123.123.123';
-			expect( new _v_( test ).isValidIP() ).toBe( true );
-			expect( new _v_( test ).validateWithRules( 'ip' ) ).toBe( true );
+			expect( _v_( '123.123.123.123' ).validate( 'ip' ) ).toBe( true );
 		} );
 	} );
 
 
-	describe( "`b64`, isValidBase64():", function () {
+	describe( "b64 - validate base64 string", function () {
 		it( "should be valid Base64 string", function () {
-			var test = 'YmFzZTY0IHRlc3QgaXM=';
-			expect( new _v_( test ).isValidBase64() ).toBe( true );
-			expect( new _v_( test ).validateWithRules( 'b64' ) ).toBe( true );
+			expect( _v_( 'YmFzZTY0IHRlc3QgaXM=' ).validate( 'b64' ) ).toBe( true );
 		} );
 	} );
 
 
-	describe( "`url`, isValidUrl()", function () {
+	describe( "url - validate url", function () {
 		it( "should be valid URL string", function () {
-			expect( new _v_( 'http://tjrus.com' ).isValidUrl() ).toBe( true );
-			expect( new _v_( 'http://tjrus.com' ).validateWithRules( 'url' ) ).toBe( true );
+			expect( _v_( 'http://tjrus.com' ).validate( 'url' ) ).toBe( true );
 		} );
 	} );
 
-	describe( "`int`, isInteger(): ", function () {
+	describe( "int - is Integer", function () {
 		it( "should contain only digits", function () {
 			var test = ['123', 123, '0000123'];
 			for ( var i = 0; i < test.length; i++ ) {
-				expect( new _v_( test[i] ).isInteger() ).toBe( true );
-				expect( new _v_( test[i] ).validateWithRules( 'int' ) ).toBe( true );
+				expect( _v_( test[i] ).validate( 'int' ) ).toBe( true );
 			}
 		} );
 	} );
 
-	describe( "`dec`, isDecimal()", function () {
+	describe( "dec - is Decimal", function () {
 		it( "should contain only digits", function () {
 			var test = ['123', 123, '0000123'];
 			for ( var i = 0; i < test.length; i++ ) {
-				expect( new _v_( test[i] ).isDecimal() ).toBe( true );
-				expect( new _v_( test[i] ).validateWithRules( 'dec' ) ).toBe( true );
+				expect( _v_( test[i] ).validate( 'dec' ) ).toBe( true );
 			}
 		} );
 	} );
 
-	describe( "`nat`, isNatural()", function () {
+	describe( "nat - is Natural", function () {
 		it( "should contain", function () {
 			var test = ['123', 123, '0000123'];
 			for ( var i = 0; i < test.length; i++ ) {
-				expect( new _v_( test[i] ).isNatural() ).toBe( true );
-				expect( new _v_( test[i] ).validateWithRules( 'nat' ) ).toBe( true );
+				expect( _v_( test[i] ).validate( 'nat' ) ).toBe( true );
 			}
 		} );
 	} );
 
-	describe( "`num`, isNumeric()", function () {
+	describe( "num - is Numeric", function () {
 		it( "should contain", function () {
 			var test = ['123', 123, '0000123'];
 			for ( var i = 0; i < test.length; i++ ) {
-				expect( new _v_( test[i] ).isNatural() ).toBe( true );
-				expect( new _v_( test[i] ).validateWithRules( 'num' ) ).toBe( true );
+				expect( _v_( test[i] ).validate( 'num' ) ).toBe( true );
 			}
 		} );
 	} );
 
-	describe( '`l=`, lengthEq( value )', function () {
+	describe( 'l= - length equals to', function () {
 		it( 'length should be equal to some value', function () {
-			expect( new _v_( 'ololo' ).lengthEq( 5 ) ).toBe( true );
-			expect( new _v_( 'ololo' ).validateWithRules( 'l=5' ) ).toBe( true );
+			expect( _v_( 'ololo' ).validate( 'l=5' ) ).toBe( true );
 		} );
 	} );
 
-	describe( '`l>`, lengthMore( value )', function () {
+	describe( 'l> - length is more than', function () {
 		it( 'length should be more then some value', function () {
-			expect( new _v_( 'olol11234o' ).lengthMore( 5 ) ).toBe( true );
-			expect( new _v_( 'olol11234o' ).validateWithRules( 'l>5' ) ).toBe( true );
+			expect( _v_( 'olol11234o' ).validate( 'l>5' ) ).toBe( true );
 		} );
 	} );
 
-	describe( '`l>=`, lengthEqOrMore( value )', function () {
+	describe( 'l>= - langth is more or equals to', function () {
 		it( 'length should be equal or more then some value', function () {
-			expect( new _v_( 'ololo' ).lengthEqOrMore( 5 ) ).toBe( true );
-			expect( new _v_( 'olol11234o' ).lengthEqOrMore( 5 ) ).toBe( true );
-			expect( new _v_( 'olo' ).lengthEqOrMore( 5 ) ).not.toBe( true );
-
-			expect( new _v_( 'ololo' ).validateWithRules( 'l>=5' ) ).toBe( true );
-			expect( new _v_( 'olol11234o' ).validateWithRules( 'l>=5' ) ).toBe( true );
-			expect( new _v_( 'olo' ).validateWithRules( 'l>=5' ) ).not.toBe( true );
+			expect( _v_( 'ololo' ).validate( 'l>=5' ) ).toBe( true );
+			expect( _v_( 'olol11234o' ).validate( 'l>=5' ) ).toBe( true );
+			expect( _v_( 'olo' ).validate( 'l>=5' ) ).not.toBe( true );
 		} );
 	} );
 
-	describe( '`l<`, lengthLess( value )', function () {
+	describe( 'l< length is less than', function () {
 		it( 'length should be less then some value', function () {
-			expect( new _v_( 'olol11234o' ).lengthLess( 5 ) ).not.toBe( true );
-			expect( new _v_( 'olol' ).lengthLess( 5 ) ).toBe( true );
-
-			expect( new _v_( 'olol11234o' ).validateWithRules( 'l<5' ) ).not.toBe( true );
-			expect( new _v_( 'olol' ).validateWithRules( 'l<5' ) ).toBe( true );
+			expect( _v_( 'olol11234o' ).validate( 'l<5' ) ).not.toBe( true );
+			expect( _v_( 'olol' ).validate( 'l<5' ) ).toBe( true );
 		} );
 	} );
 
-	describe( '`l<=`, lengthEqOrLess( value )', function () {
+	describe( 'l<= length is less or equals to', function () {
 		it( 'length should be equal or less then some value', function () {
-			expect( new _v_( 'ololo' ).lengthEqOrLess( 5 ) ).toBe( true );
-			expect( new _v_( 'olol' ).lengthEqOrLess( 5 ) ).toBe( true );
-			expect( new _v_( 'olol11234o' ).lengthEqOrLess( 5 ) ).not.toBe( true );
-
-			expect( new _v_( 'olol11234o' ).validateWithRules( 'l<=5' ) ).not.toBe( true );
-			expect( new _v_( 'ololo' ).validateWithRules( 'l<=5' ) ).toBe( true );
-			expect( new _v_( 'olol' ).validateWithRules( 'l<=5' ) ).toBe( true );
+			expect( _v_( 'olol11234o' ).validate( 'l<=5' ) ).not.toBe( true );
+			expect( _v_( 'ololo' ).validate( 'l<=5' ) ).toBe( true );
+			expect( _v_( 'olol' ).validate( 'l<=5' ) ).toBe( true );
 		} );
 	} );
 
-
-	describe( '`>`, greaterThen( value )', function () {
-		it( 'length should be greater then some value', function () {
-			expect( new _v_( '10' ).greaterThen( 5 ) ).toBe( true );
-			expect( new _v_( '6' ).greaterThen( 5 ) ).toBe( true );
-			expect( new _v_( '1' ).greaterThen( 5 ) ).not.toBe( true );
-			expect( new _v_( '10' ).validateWithRules( '>5' ) ).toBe( true );
-			expect( new _v_( '6' ).validateWithRules( '>5' ) ).toBe( true );
-			expect( new _v_( 1 ).validateWithRules( '>5' ) ).not.toBe( true );
-		} );
-	} );
-
-	describe( '`>=`, greaterOrEq( value )', function () {
-		it( 'length should be greater or equal to some value', function () {
-			expect( new _v_( '10' ).greaterOrEq( 5 ) ).toBe( true );
-			expect( new _v_( '5' ).greaterOrEq( 5 ) ).toBe( true );
-			expect( new _v_( '1' ).greaterOrEq( 5 ) ).not.toBe( true );
-			expect( new _v_( '10' ).validateWithRules( '>=5' ) ).toBe( true );
-			expect( new _v_( '5' ).validateWithRules( '>=5' ) ).toBe( true );
-			expect( new _v_( 1 ).validateWithRules( '>=5' ) ).not.toBe( true );
-		} );
-	} );
-
-	describe( '`<`, lessThen( value )', function () {
-		it( 'length should be less or equal to some value', function () {
-			expect( new _v_( '4' ).lessThen( 5 ) ).toBe( true );
-			expect( new _v_( '5' ).lessThen( 5 ) ).not.toBe( true );
-			expect( new _v_( '10' ).lessThen( 5 ) ).not.toBe( true );
-			expect( new _v_( '10' ).validateWithRules( '<5' ) ).not.toBe( true );
-			expect( new _v_( '5' ).validateWithRules( '<5' ) ).not.toBe( true );
-			expect( new _v_( 4 ).validateWithRules( '<5' ) ).toBe( true );
-		} );
-	} );
-
-	describe( '`<=`, lessOrEq( value )', function () {
-		it( 'length should be less or equal to some value', function () {
-			expect( new _v_( '4' ).lessOrEq( 5 ) ).toBe( true );
-			expect( new _v_( '5' ).lessOrEq( 5 ) ).toBe( true );
-			expect( new _v_( '10' ).lessOrEq( 5 ) ).not.toBe( true );
-			expect( new _v_( '10' ).validateWithRules( '<=5' ) ).not.toBe( true );
-			expect( new _v_( '5' ).validateWithRules( '<=5' ) ).toBe( true );
-			expect( new _v_( 4 ).validateWithRules( '<=5' ) ).toBe( true );
-		} );
-	} );
-
-	describe( '`reg=`, validateRegular( regexp )', function () {
-		it( 'validation with regular expression', function () {
-			expect( new _v_( 'kjdh.asdf.asd' ).validateRegular( '^([a-z]{2,4})(((\\.)([A-Za-z0-9-]+))+)$' ) ).toBe( true );
-			expect( new _v_( 'kjsddh.asdf.asd' ).validateRegular( '^([a-z]{2,4})(((\\.)([A-Za-z0-9-]+))+)$' ) ).toBe( false );
-			expect( new _v_( 'kjdh.asdf.asd.' ).validateRegular( '^([a-z]{2,4})(((\\.)([A-Za-z0-9-]+))+)$' ) ).toBe( false );
-			expect( new _v_( 'kjdh.asdf.asd' ).validateWithRules( 'reg=^([a-z]{2,4})(((\\.)([A-Za-z0-9-]+))+)$' ) ).toBe( true );
-			expect( new _v_( 'kjsddh.asdf.asd' ).validateWithRules( 'reg=^([a-z]{2,4})(((\\.)([A-Za-z0-9-]+))+)$' ) ).toBe( false );
-			expect( new _v_( 'kjdh.asdf.asd.' ).validateWithRules( 'reg=^([a-z]{2,4})(((\\.)([A-Za-z0-9-]+))+)$' ) ).toBe( false );
-		} );
-	} );
-
-
-	describe( '`lr=`, lengthInRange( range_array )', function () {
+	describe( 'lr= - length is in range', function () {
 		it( 'length is in defined range', function () {
-			expect( new _v_( 'asdf' ).lengthInRange( [3, 5] ) ).toBe( true );
-			expect( new _v_( 'asdf' ).lengthInRange( [4, 4] ) ).toBe( true );
-			expect( new _v_( 'asdf' ).lengthInRange( [5, 6] ) ).toBe( false );
-			expect( new _v_( 'asdf' ).lengthInRange( [1, 3] ) ).toBe( false );
-			expect( new _v_( 'asdf' ).validateWithRules( 'lr=[3,5]' ) ).toBe( true );
-			expect( new _v_( 'asdf' ).validateWithRules( 'lr=[4,4]' ) ).toBe( true );
-			expect( new _v_( 'asdf' ).validateWithRules( 'lr=[5,6]' ) ).toBe( false );
-			expect( new _v_( 'asdf' ).validateWithRules( 'lr=[1,3]' ) ).toBe( false );
+			expect( _v_( 'asdf' ).validate( 'lr=[3,5]' ) ).toBe( true );
+			expect( _v_( 'asdf' ).validate( 'lr=[4,4]' ) ).toBe( true );
+			expect( _v_( 'asdf' ).validate( 'lr=[5,6]' ) ).toBe( false );
+			expect( _v_( 'asdf' ).validate( 'lr=[1,3]' ) ).toBe( false );
 		} );
 	} );
 
 
-	describe( '`r=`, inRange( range_array )', function () {
+	describe( '> more than', function () {
+		it( 'length should be greater then some value', function () {
+			expect( _v_( '10' ).validate( '>5' ) ).toBe( true );
+			expect( _v_( '6' ).validate( '>5' ) ).toBe( true );
+			expect( _v_( 1 ).validate( '>5' ) ).not.toBe( true );
+		} );
+	} );
+
+	describe( '>= more or equals to', function () {
+		it( 'length should be greater or equal to some value', function () {
+			expect( _v_( '10' ).validate( '>=5' ) ).toBe( true );
+			expect( _v_( '5' ).validate( '>=5' ) ).toBe( true );
+			expect( _v_( 1 ).validate( '>=5' ) ).not.toBe( true );
+		} );
+	} );
+
+	describe( '< less than', function () {
+		it( 'length should be less or equal to some value', function () {
+			expect( _v_( '10' ).validate( '<5' ) ).not.toBe( true );
+			expect( _v_( '5' ).validate( '<5' ) ).not.toBe( true );
+			expect( _v_( 4 ).validate( '<5' ) ).toBe( true );
+		} );
+	} );
+
+	describe( '<= - lass or equals to', function () {
+		it( 'length should be less or equal to some value', function () {
+			expect( _v_( '10' ).validate( '<=5' ) ).not.toBe( true );
+			expect( _v_( '5' ).validate( '<=5' ) ).toBe( true );
+			expect( _v_( 4 ).validate( '<=5' ) ).toBe( true );
+		} );
+	} );
+
+	describe( 'r= - value should be in range', function () {
 		it( 'value is in defined range', function () {
-			expect( new _v_( 12 ).inRange( [10, 100] ) ).toBe( true );
-			expect( new _v_( 10 ).inRange( [10, 100] ) ).toBe( true );
-			expect( new _v_( 9 ).inRange( [10, 100] ) ).toBe( false );
-			expect( new _v_( 101 ).inRange( [10, 100] ) ).toBe( false );
-
-			expect( new _v_( 12 ).validateWithRules( 'r=[10,100]' ) ).toBe( true );
-			expect( new _v_( 10 ).validateWithRules( 'r=[10,100]' ) ).toBe( true );
-			expect( new _v_( 9 ).validateWithRules( 'r=[10,100]' ) ).toBe( false );
-			expect( new _v_( 101 ).validateWithRules( 'r=[10,100]' ) ).toBe( false );
+			expect( _v_( 12 ).validate( 'r=[10,100]' ) ).toBe( true );
+			expect( _v_( 10 ).validate( 'r=[10,100]' ) ).toBe( true );
+			expect( _v_( 9 ).validate( 'r=[10,100]' ) ).toBe( false );
+			expect( _v_( 101 ).validate( 'r=[10,100]' ) ).toBe( false );
 		} );
 	} );
 
 
-	describe( '`=`, matchesTo( value )', function () {
-		it( 'matches to defined value (string or number)', function () {
-			expect( new _v_( 12 ).matchesTo( 12 ) ).toBe( true );
-			expect( new _v_( 11 ).matchesTo( 12 ) ).toBe( false );
-			expect( new _v_( 12 ).matchesTo( '12' ) ).toBe( true );
-			expect( new _v_( 11 ).matchesTo( '12' ) ).toBe( false );
-			expect( new _v_( 'absasd' ).matchesTo( 'ba' ) ).toBe( false );
-			expect( new _v_( 'ba' ).matchesTo( 'ba' ) ).toBe( true );
+	describe( 'reg= - regular expression validation', function () {
+		it( 'validation with regular expression', function () {
+			expect( new _v_( 'kjdh.asdf.asd' ).validate( 'reg=^([a-z]{2,4})(((\\.)([A-Za-z0-9-]+))+)$' ) ).toBe( true );
+			expect( new _v_( 'kjsddh.asdf.asd' ).validate( 'reg=^([a-z]{2,4})(((\\.)([A-Za-z0-9-]+))+)$' ) ).toBe( false );
+			expect( new _v_( 'kjdh.asdf.asd.' ).validate( 'reg=^([a-z]{2,4})(((\\.)([A-Za-z0-9-]+))+)$' ) ).toBe( false );
+		} );
+	} );
 
-			expect( new _v_( 12 ).validateWithRules( '=12' ) ).toBe( true );
-			expect( new _v_( 11 ).validateWithRules( '=12' ) ).toBe( false );
-			expect( new _v_( '12' ).validateWithRules( '=12' ) ).toBe( true );
-			expect( new _v_( 11 ).validateWithRules( '=12' ) ).toBe( false );
-			expect( new _v_( 'absasd' ).validateWithRules( '=ba' ) ).toBe( false );
-			expect( new _v_( 'ba' ).validateWithRules( '=ba' ) ).toBe( true );
+
+	describe( '= - matches to', function () {
+		it( 'matches to defined value (string or number)', function () {
+			expect( _v_( 12 ).validate( '=12' ) ).toBe( true );
+			expect( _v_( 11 ).validate( '=12' ) ).toBe( false );
+			expect( _v_( '12' ).validate( '=12' ) ).toBe( true );
+			expect( _v_( 11 ).validate( '=12' ) ).toBe( false );
+			expect( _v_( 'absasd' ).validate( '=ba' ) ).toBe( false );
+			expect( _v_( 'ba' ).validate( '=ba' ) ).toBe( true );
 		} );
 
 		it( 'value can be array of elements', function () {
-			expect( new _v_( 'asdf' ).matchesTo( ['asdf', 'asdfasdfasd'] ) ).toBe( true );
-			expect( new _v_( 'asdfasdfasd' ).matchesTo( ['asdf', 'asdfasdfasd'] ) ).toBe( true );
-			expect( new _v_( 'asdfasdfasd' ).matchesTo( ['asdf', 'as'] ) ).toBe( false );
-
-			expect( new _v_( 'asdf' ).validateWithRules( '=[asdf,asdfasdfasd]' ) ).toBe( true );
-			expect( new _v_( 'asdfasdfasd' ).validateWithRules( '=[asdf,asdfasdfasd]' ) ).toBe( true );
-			expect( new _v_( 'asdfasdfasd' ).validateWithRules( '=[asdf,as]' ) ).toBe( false );
+			expect( _v_( 'asdf' ).validate( '=[asdf,asdfasdfasd]' ) ).toBe( true );
+			expect( _v_( 'asdfasdfasd' ).validate( '=[asdf,asdfasdfasd]' ) ).toBe( true );
+			expect( _v_( 'asdfasdfasd' ).validate( '=[asdf,as]' ) ).toBe( false );
 		} );
 
 		it( 'included \'#element_id\' to compare with some element value', function () {
 			$( '#unique_test_id' ).val( 'asdf' );
-			expect( new _v_( 'asdf' ).matchesTo( ['#unique_test_id', 'asd'] ) ).toBe( true );
-			expect( new _v_( 'asd' ).matchesTo( ['#unique_test_id', 'asd'] ) ).toBe( true );
-			expect( new _v_( 'assd' ).matchesTo( ['#unique_test_id', 'asd'] ) ).toBe( false );
-
-			expect( new _v_( 'asdf' ).validateWithRules( '=[#unique_test_id,asd]' ) ).toBe( true );
-			expect( new _v_( 'asd' ).validateWithRules( '=[#unique_test_id,asd]' ) ).toBe( true );
-			expect( new _v_( 'assd' ).validateWithRules( '=[#unique_test_id,asd]' ) ).toBe( false );
+			expect( _v_( 'asdf' ).validate( '=[#unique_test_id,asd]' ) ).toBe( true );
+			expect( _v_( 'asd' ).validate( '=[#unique_test_id,asd]' ) ).toBe( true );
+			expect( _v_( 'assd' ).validate( '=[#unique_test_id,asd]' ) ).toBe( false );
 		} );
 	} );
 
 
-	describe( '`=#`, matchesToId ( id )', function () {
+	describe( '=# - matches to ID', function () {
 		it( 'matches to defined element (id) value', function () {
 			$( '#unique_test_id' ).val( '' );
-			expect( new _v_( '' ).matchesToId( 'unique_test_id' ) ).toBe( true );
-			expect( new _v_( '' ).validateWithRules( '=#unique_test_id' ) ).toBe( true );
+			expect( _v_( '' ).validate( '=#unique_test_id' ) ).toBe( true );
 
 			$( '#unique_test_id' ).val( '1234' );
-			expect( new _v_( '' ).matchesToId( 'unique_test_id' ) ).toBe( false );
-			expect( new _v_( '1234' ).matchesToId( 'unique_test_id' ) ).toBe( true );
-			expect( new _v_( 1234 ).matchesToId( 'unique_test_id' ) ).toBe( true );
-			expect( new _v_( 1234 ).matchesToId( 'unique_test_id' ) ).toBe( true );
-
-			expect( new _v_( '' ).validateWithRules( '=#unique_test_id' ) ).toBe( false );
-			expect( new _v_( '1234' ).validateWithRules( '=#unique_test_id' ) ).toBe( true );
-			expect( new _v_( 1234 ).validateWithRules( '=#unique_test_id' ) ).toBe( true );
-			expect( new _v_( 1234 ).validateWithRules( '=#unique_test_id' ) ).toBe( true );
+			expect( _v_( '' ).validate( '=#unique_test_id' ) ).toBe( false );
+			expect( _v_( '1234' ).validate( '=#unique_test_id' ) ).toBe( true );
+			expect( _v_( 1234 ).validate( '=#unique_test_id' ) ).toBe( true );
+			expect( _v_( 1234 ).validate( '=#unique_test_id' ) ).toBe( true );
 		} );
 
 		it( 'id can be array of ids', function () {
 			$( '#unique_test_id' ).val( '' );
 			$( '#unique_test_id2' ).val( '1234' );
-			expect( new _v_( '' ).matchesToId( ['unique_test_id', 'unique_test_id2'] ) ).toBe( true );
-			expect( new _v_( '1234' ).matchesToId( ['unique_test_id', 'unique_test_id2'] ) ).toBe( true );
-			expect( new _v_( '34' ).matchesToId( ['unique_test_id', 'unique_test_id2'] ) ).toBe( false );
-
-			expect( new _v_( '' ).validateWithRules( '=[#unique_test_id,#unique_test_id2]' ) ).toBe( true );
-			expect( new _v_( '1234' ).validateWithRules( '=[#unique_test_id,#unique_test_id2]' ) ).toBe( true );
-			expect( new _v_( '34' ).validateWithRules( '=[#unique_test_id,#unique_test_id2]' ) ).toBe( false );
+			expect( _v_( '' ).validate( '=[#unique_test_id,#unique_test_id2]' ) ).toBe( true );
+			expect( _v_( '1234' ).validate( '=[#unique_test_id,#unique_test_id2]' ) ).toBe( true );
+			expect( _v_( '34' ).validate( '=[#unique_test_id,#unique_test_id2]' ) ).toBe( false );
 		} );
 	} );
 
 
-	describe( '`!=`, notMatches', function () {
+	describe( '!= - not matches', function () {
 		it( 'not matches to defined value (string or number)', function () {
-			expect( new _v_( 12 ).notMatches( 12 ) ).not.toBe( true );
-			expect( new _v_( 11 ).notMatches( 12 ) ).not.toBe( false );
-			expect( new _v_( 12 ).notMatches( '12' ) ).not.toBe( true );
-			expect( new _v_( 11 ).notMatches( '12' ) ).not.toBe( false );
-			expect( new _v_( 'absasd' ).notMatches( 'ba' ) ).not.toBe( false );
-			expect( new _v_( 'ba' ).notMatches( 'ba' ) ).not.toBe( true );
-
-			expect( new _v_( 12 ).validateWithRules( '!=12' ) ).not.toBe( true );
-			expect( new _v_( 11 ).validateWithRules( '!=12' ) ).not.toBe( false );
-			expect( new _v_( '12' ).validateWithRules( '!=12' ) ).not.toBe( true );
-			expect( new _v_( 11 ).validateWithRules( '!=12' ) ).not.toBe( false );
-			expect( new _v_( 'absasd' ).validateWithRules( '!=ba' ) ).not.toBe( false );
-			expect( new _v_( 'ba' ).validateWithRules( '!=ba' ) ).not.toBe( true );
+			expect( _v_( 12 ).validate( '!=12' ) ).not.toBe( true );
+			expect( _v_( 11 ).validate( '!=12' ) ).not.toBe( false );
+			expect( _v_( '12' ).validate( '!=12' ) ).not.toBe( true );
+			expect( _v_( 11 ).validate( '!=12' ) ).not.toBe( false );
+			expect( _v_( 'absasd' ).validate( '!=ba' ) ).not.toBe( false );
+			expect( _v_( 'ba' ).validate( '!=ba' ) ).not.toBe( true );
 		} );
 
 		it( 'value can be array of elements', function () {
-			expect( new _v_( 'asdf' ).notMatches( ['asdf', 'asdfasdfasd'] ) ).not.toBe( true );
-			expect( new _v_( 'asdfasdfasd' ).notMatches( ['asdf', 'asdfasdfasd'] ) ).not.toBe( true );
-			expect( new _v_( 'asdfasdfasd' ).notMatches( ['asdf', 'as'] ) ).not.toBe( false );
-
-			expect( new _v_( 'asdf' ).validateWithRules( '!=[asdf,asdfasdfasd]' ) ).not.toBe( true );
-			expect( new _v_( 'asdfasdfasd' ).validateWithRules( '!=[asdf,asdfasdfasd]' ) ).not.toBe( true );
-			expect( new _v_( 'asdfasdfasd' ).validateWithRules( '!=[asdf,as]' ) ).not.toBe( false );
+			expect( _v_( 'asdf' ).validate( '!=[asdf,asdfasdfasd]' ) ).not.toBe( true );
+			expect( _v_( 'asdfasdfasd' ).validate( '!=[asdf,asdfasdfasd]' ) ).not.toBe( true );
+			expect( _v_( 'asdfasdfasd' ).validate( '!=[asdf,as]' ) ).not.toBe( false );
 		} );
 
 		it( 'included \'#element_id\' to compare with some element value', function () {
 			$( '#unique_test_id' ).val( 'asdf' );
-			expect( new _v_( 'asdf' ).notMatches( ['#unique_test_id', 'asd'] ) ).not.toBe( true );
-			expect( new _v_( 'asd' ).notMatches( ['#unique_test_id', 'asd'] ) ).not.toBe( true );
-			expect( new _v_( 'assd' ).notMatches( ['#unique_test_id', 'asd'] ) ).not.toBe( false );
-
-			expect( new _v_( 'asdf' ).validateWithRules( '!=[#unique_test_id,asd]' ) ).not.toBe( true );
-			expect( new _v_( 'asd' ).validateWithRules( '!=[#unique_test_id,asd]' ) ).not.toBe( true );
-			expect( new _v_( 'assd' ).validateWithRules( '!=[#unique_test_id,asd]' ) ).not.toBe( false );
+			expect( _v_( 'asdf' ).validate( '!=[#unique_test_id,asd]' ) ).not.toBe( true );
+			expect( _v_( 'asd' ).validate( '!=[#unique_test_id,asd]' ) ).not.toBe( true );
+			expect( _v_( 'assd' ).validate( '!=[#unique_test_id,asd]' ) ).not.toBe( false );
 		} );
 	} );
 
 
-	describe( '`!`, notContain()', function () {
+	describe( '! - no cantain', function () {
 		it( 'not contain defined value (string or number)', function () {
-			expect( new _v_( 12 ).notContain( 12 ) ).toBe( false );
-			expect( new _v_( 11 ).notContain( 12 ) ).toBe( true );
-			expect( new _v_( 11 ).notContain( '12' ) ).toBe( true );
-			expect( new _v_( 'absasd' ).notContain( 'ba' ) ).toBe( true );
-			expect( new _v_( 11 ).notContain( 1 ) ).toBe( false );
-			expect( new _v_( 11 ).notContain( '1' ) ).toBe( false );
-			expect( new _v_( '11' ).notContain( '1' ) ).toBe( false );
-
-			expect( new _v_( 12 ).validateWithRules( '!12' ) ).toBe( false );
-			expect( new _v_( '11' ).validateWithRules( '!12' ) ).toBe( true );
-			expect( new _v_( 11 ).validateWithRules( '!12' ) ).toBe( true );
-			expect( new _v_( 'absasd' ).validateWithRules( '!ba' ) ).toBe( true );
-			expect( new _v_( 11 ).validateWithRules( '!1' ) ).toBe( false );
-			expect( new _v_( 11 ).validateWithRules( '!1' ) ).toBe( false );
-			expect( new _v_( '11' ).validateWithRules( '!1' ) ).toBe( false );
+			expect( _v_( 12 ).validate( '!12' ) ).toBe( false );
+			expect( _v_( '11' ).validate( '!12' ) ).toBe( true );
+			expect( _v_( 11 ).validate( '!12' ) ).toBe( true );
+			expect( _v_( 'absasd' ).validate( '!ba' ) ).toBe( true );
+			expect( _v_( 11 ).validate( '!1' ) ).toBe( false );
+			expect( _v_( 11 ).validate( '!1' ) ).toBe( false );
+			expect( _v_( '11' ).validate( '!1' ) ).toBe( false );
 		} );
 
 		it( 'not contain defined values in array', function () {
-			expect( new _v_( 12 ).notContain( [12, 32] ) ).toBe( false );
-			expect( new _v_( '12' ).notContain( ['12', 32] ) ).toBe( false );
-			expect( new _v_( 11 ).notContain( [12, 32] ) ).toBe( true );
-			expect( new _v_( 11 ).notContain( [1] ) ).toBe( false );
-
-			expect( new _v_( 12 ).validateWithRules( '![12,32]' ) ).toBe( false );
-			expect( new _v_( '12' ).validateWithRules( '![12,32]' ) ).toBe( false );
-			expect( new _v_( 11 ).validateWithRules( '![12,32]' ) ).toBe( true );
-			expect( new _v_( 11 ).validateWithRules( '![1]' ) ).toBe( false );
+			expect( _v_( 12 ).validate( '![12,32]' ) ).toBe( false );
+			expect( _v_( '12' ).validate( '![12,32]' ) ).toBe( false );
+			expect( _v_( 11 ).validate( '![12,32]' ) ).toBe( true );
+			expect( _v_( 11 ).validate( '![1]' ) ).toBe( false );
 		} );
 	} );
 
 
-	describe( '`c`, isValidCard() - should be valid card (all types)', function () {
+	describe( 'c - validate cards (all types)', function () {
 		it( 'All Visa card numbers start with a 4. New cards have 16 digits. Old cards have 13', function () {
 			for ( var i = 0; i < 100; i++ ) {
 				var value = '4' + (Math.random() * 1).toString().substr( 2, 15 );
 				if ( value.length == 16 ) {
-					expect( new _v_( value ).isValidCard() ).toBe( true );
-					expect( new _v_( value ).validateWithRules( 'c' ) ).toBe( true );
+					expect( _v_( value ).validate( 'c' ) ).toBe( true );
 				}
 			}
 		} );
@@ -467,17 +470,11 @@ describe( "Test Validator (_v_) methods", function () {
 			for ( var i = 0; i < 100; i++ ) {
 				var value = (Math.random() * 1).toString().substr( 2, 14 );
 				if ( value.length == 14 ) {
-					expect( new _v_( '51' + value ).isValidCard() ).toBe( true );
-					expect( new _v_( '52' + value ).isValidCard() ).toBe( true );
-					expect( new _v_( '53' + value ).isValidCard() ).toBe( true );
-					expect( new _v_( '54' + value ).isValidCard() ).toBe( true );
-					expect( new _v_( '55' + value ).isValidCard() ).toBe( true );
-
-					expect( new _v_( '51' + value ).validateWithRules( 'c' ) ).toBe( true );
-					expect( new _v_( '52' + value ).validateWithRules( 'c' ) ).toBe( true );
-					expect( new _v_( '53' + value ).validateWithRules( 'c' ) ).toBe( true );
-					expect( new _v_( '54' + value ).validateWithRules( 'c' ) ).toBe( true );
-					expect( new _v_( '55' + value ).validateWithRules( 'c' ) ).toBe( true );
+					expect( _v_( '51' + value ).validate( 'c' ) ).toBe( true );
+					expect( _v_( '52' + value ).validate( 'c' ) ).toBe( true );
+					expect( _v_( '53' + value ).validate( 'c' ) ).toBe( true );
+					expect( _v_( '54' + value ).validate( 'c' ) ).toBe( true );
+					expect( _v_( '55' + value ).validate( 'c' ) ).toBe( true );
 				}
 			}
 		} );
@@ -486,11 +483,8 @@ describe( "Test Validator (_v_) methods", function () {
 			for ( var i = 0; i < 100; i++ ) {
 				var value = (Math.random() * 1).toString().substr( 2, 13 );
 				if ( value.length == 14 ) {
-					expect( new _v_( '34' + value ).isValidCard() ).toBe( true );
-					expect( new _v_( '37' + value ).isValidCard() ).toBe( true );
-
-					expect( new _v_( '34' + value ).validateWithRules( 'c' ) ).toBe( true );
-					expect( new _v_( '37' + value ).validateWithRules( 'c' ) ).toBe( true );
+					expect( _v_( '34' + value ).validate( 'c' ) ).toBe( true );
+					expect( _v_( '37' + value ).validate( 'c' ) ).toBe( true );
 				}
 			}
 		} );
@@ -499,64 +493,48 @@ describe( "Test Validator (_v_) methods", function () {
 			for ( var i = 0; i < 100; i++ ) {
 				var value = (Math.random() * 1).toString().substr( 2, 14 );
 				if ( value.length == 14 ) {
-					expect( new _v_( '65' + value ).isValidCard() ).toBe( true );
-					expect( new _v_( '6011' + value.substr( 0, 12 ) ).isValidCard() ).toBe( true );
-
-					expect( new _v_( '65' + value ).validateWithRules( 'c' ) ).toBe( true );
-					expect( new _v_( '6011' + value.substr( 0, 12 ) ).validateWithRules( 'c' ) ).toBe( true );
+					expect( _v_( '65' + value ).validate( 'c' ) ).toBe( true );
+					expect( _v_( '6011' + value.substr( 0, 12 ) ).validate( 'c' ) ).toBe( true );
 				}
 			}
 		} );
 	} );
 
 
-	describe( '`cv`, isValidVisa()', function () {
+	describe( 'cv - validate Visa cards', function () {
 		it( 'All Visa card numbers start with a 4. New cards have 16 digits. Old cards have 13', function () {
 			for ( var i = 0; i < 100; i++ ) {
 				var value = '4' + (Math.random() * 1).toString().substr( 2, 15 );
 				if ( value.length == 16 ) {
-					expect( new _v_( value ).isValidVisa() ).toBe( true );
-					expect( new _v_( value.substr( 0, 13 ) ).isValidVisa() ).toBe( true );
-
-					expect( new _v_( value ).validateWithRules( 'cv' ) ).toBe( true );
-					expect( new _v_( value.substr( 0, 13 ) ).validateWithRules( 'cv' ) ).toBe( true );
+					expect( _v_( value ).validate( 'cv' ) ).toBe( true );
+					expect( _v_( value.substr( 0, 13 ) ).validate( 'cv' ) ).toBe( true );
 				}
 			}
 			for ( var i = 0; i < 100; i++ ) {
 				var value = (Math.random() * 1).toString().substr( 2, 16 );
 				if ( parseInt( value[0] ) != 4 ) {
-					expect( new _v_( value ).isValidVisa() ).not.toBe( true );
-					expect( new _v_( value.substr( 0, 13 ) ).isValidVisa() ).not.toBe( true );
-
-					expect( new _v_( value ).validateWithRules( 'cv' ) ).not.toBe( true );
-					expect( new _v_( value.substr( 0, 13 ) ).validateWithRules( 'cv' ) ).not.toBe( true );
+					expect( _v_( value ).validate( 'cv' ) ).not.toBe( true );
+					expect( _v_( value.substr( 0, 13 ) ).validate( 'cv' ) ).not.toBe( true );
 				}
 			}
 		} );
 	} );
 
 
-	describe( '`cm`, isValidMastercard()', function () {
+	describe( 'cm - validate Master cards', function () {
 		it( 'All MasterCard numbers start with the numbers 51 through 55. All have 16 digits', function () {
 			for ( var i = 0; i < 100; i++ ) {
 				var value = (Math.random() * 1).toString().substr( 2, 14 );
 				if ( value.length == 14 ) {
-					expect( new _v_( '51' + value ).isValidMastercard() ).toBe( true );
-					expect( new _v_( '52' + value ).isValidMastercard() ).toBe( true );
-					expect( new _v_( '53' + value ).isValidMastercard() ).toBe( true );
-					expect( new _v_( '54' + value ).isValidMastercard() ).toBe( true );
-					expect( new _v_( '55' + value ).isValidMastercard() ).toBe( true );
-
-					expect( new _v_( '51' + value ).validateWithRules( 'cm' ) ).toBe( true );
-					expect( new _v_( '52' + value ).validateWithRules( 'cm' ) ).toBe( true );
-					expect( new _v_( '53' + value ).validateWithRules( 'cm' ) ).toBe( true );
-					expect( new _v_( '54' + value ).validateWithRules( 'cm' ) ).toBe( true );
-					expect( new _v_( '55' + value ).validateWithRules( 'cm' ) ).toBe( true );
+					expect( _v_( '51' + value ).validate( 'cm' ) ).toBe( true );
+					expect( _v_( '52' + value ).validate( 'cm' ) ).toBe( true );
+					expect( _v_( '53' + value ).validate( 'cm' ) ).toBe( true );
+					expect( _v_( '54' + value ).validate( 'cm' ) ).toBe( true );
+					expect( _v_( '55' + value ).validate( 'cm' ) ).toBe( true );
 
 					var v2 = (Math.random() * 1).toString().substr( 2, 2 );
 					if ( parseInt( v2, 10 ) < 51 || parseInt( v2, 10 ) > 55 ) {
-						expect( new _v_( v2 + value ).isValidMastercard() ).not.toBe( true );
-						expect( new _v_( v2 + value ).validateWithRules( 'cm' ) ).not.toBe( true );
+						expect( _v_( v2 + value ).validate( 'cm' ) ).not.toBe( true );
 					}
 				}
 			}
@@ -564,21 +542,17 @@ describe( "Test Validator (_v_) methods", function () {
 	} );
 
 
-	describe( '`ca`, isValidAmex()', function () {
+	describe( 'ca - validate Amex cards', function () {
 		it( 'American Express card numbers start with 34 or 37 and have 15 digits', function () {
 			for ( var i = 0; i < 100; i++ ) {
 				var value = (Math.random() * 1).toString().substr( 2, 13 );
 				if ( value.length == 14 ) {
-					expect( new _v_( '34' + value ).isValidAmex() ).toBe( true );
-					expect( new _v_( '37' + value ).isValidAmex() ).toBe( true );
-
-					expect( new _v_( '34' + value ).validateWithRules( 'ca' ) ).toBe( true );
-					expect( new _v_( '37' + value ).validateWithRules( 'ca' ) ).toBe( true );
+					expect( _v_( '34' + value ).validate( 'ca' ) ).toBe( true );
+					expect( _v_( '37' + value ).validate( 'ca' ) ).toBe( true );
 
 					var v2 = (Math.random() * 1).toString().substr( 2, 2 );
 					if ( parseInt( v2, 10 ) < 51 || parseInt( v2, 10 ) > 55 ) {
-						expect( new _v_( v2 + value ).isValidAmex() ).not.toBe( true );
-						expect( new _v_( v2 + value ).validateWithRules( 'ca' ) ).not.toBe( true );
+						expect( _v_( v2 + value ).validate( 'ca' ) ).not.toBe( true );
 					}
 				}
 			}
@@ -586,25 +560,20 @@ describe( "Test Validator (_v_) methods", function () {
 	} );
 
 
-	describe( '`cd`, isValidDiscover()', function () {
+	describe( 'cd - validate Discover cards', function () {
 		it( 'Discover card numbers begin with 6011 or 65. All have 16 digits', function () {
 			for ( var i = 0; i < 100; i++ ) {
 				var value = (Math.random() * 1).toString().substr( 2, 14 );
 				if ( value.length == 14 ) {
-					expect( new _v_( '65' + value ).isValidDiscover() ).toBe( true );
-					expect( new _v_( '6011' + value.substr( 0, 12 ) ).isValidDiscover() ).toBe( true );
-
-					expect( new _v_( '65' + value ).validateWithRules( 'cd' ) ).toBe( true );
-					expect( new _v_( '6011' + value.substr( 0, 12 ) ).validateWithRules( 'cd' ) ).toBe( true );
+					expect( _v_( '65' + value ).validate( 'cd' ) ).toBe( true );
+					expect( _v_( '6011' + value.substr( 0, 12 ) ).validate( 'cd' ) ).toBe( true );
 
 					var v2 = (Math.random() * 1).toString().substr( 2, 4 );
 					if ( parseInt( v2, 10 ) != 6011 ) {
-						expect( new _v_( v2 + value ).isValidDiscover() ).not.toBe( true );
-						expect( new _v_( v2 + value ).validateWithRules( 'cd' ) ).not.toBe( true );
+						expect( _v_( v2 + value ).validate( 'cd' ) ).not.toBe( true );
 					}
 					if ( parseInt( v2.substr( 0, 2 ), 10 ) != 65 ) {
-						expect( new _v_( v2 + value.substr( 0, 2 ) ).isValidDiscover() ).not.toBe( true );
-						expect( new _v_( v2 + value.substr( 0, 2 ) ).validateWithRules( 'cd' ) ).not.toBe( true );
+						expect( _v_( v2 + value.substr( 0, 2 ) ).validate( 'cd' ) ).not.toBe( true );
 					}
 				}
 			}
@@ -612,7 +581,7 @@ describe( "Test Validator (_v_) methods", function () {
 	} );
 
 
-	describe( '`D=`, isValidDate', function () {
+	describe( 'D= - validate date in different formats', function () {
 		it( '`D=Y-M-D R:I:S` - maximum example', function () {
 			for ( var i = 0; i < 100; i++ ) {
 				var YYYY = (parseInt( (Math.random() * 1).toString().substr( 2, 4 ), 10 )).toString();
@@ -622,8 +591,7 @@ describe( "Test Validator (_v_) methods", function () {
 				var II = parseInt( (Math.random() * 60).toString().split( '.' )[0], 10 );
 				var SS = parseInt( (Math.random() * 60).toString().split( '.' )[0], 10 );
 				if ( YYYY.length == 4 ) {
-					expect( new _v_( YYYY + '-' + MM + '-' + DD + ' ' + RR + ':' + II + ':' + SS ).isValidDate( 'Y-M-D R:I:S' ) ).toBe( true );
-					expect( new _v_( YYYY + '-' + MM + '-' + DD + ' ' + RR + ':' + II + ':' + SS ).validateWithRules( {rule: 'D=Y-M-D R:I:S', rule_separator: '|'} ) ).toBe( true );
+					expect( _v_( YYYY + '-' + MM + '-' + DD + ' ' + RR + ':' + II + ':' + SS ).separate( '|' ).validate( 'D=Y-M-D R:I:S' ) ).toBe( true );
 				}
 			}
 		} )
@@ -638,23 +606,17 @@ describe( "Test Validator (_v_) methods", function () {
 				var SS = parseInt( (Math.random() * 60).toString().split( '.' )[0], 10 );
 				var AA = (Math.random() * 2 > 1) ? 'PM' : 'AM';
 				if ( YYYY.length == 4 ) {
-					expect( new _v_( YYYY + '-' + MM + '-' + DD + ' ' + HH + ':' + II + ':' + SS + ' ' + AA ).isValidDate( 'Y-M-D H:I:S A' ) ).toBe( true );
-					expect( new _v_( YYYY + '-' + MM + '-' + DD + ' ' + HH + ':' + II + ':' + SS + ' ' + AA ).validateWithRules( {rule: 'D=Y-M-D H:I:S A', rule_separator: '|'} ) ).toBe( true );
+					expect( _v_( YYYY + '-' + MM + '-' + DD + ' ' + HH + ':' + II + ':' + SS + ' ' + AA ).separate( '|' ).validate( 'D=Y-M-D H:I:S A' ) ).toBe( true );
 				}
 			}
 		} )
 
 
 		it( 'and other combinations of `Y`,`y`,`M`,`m`,`N`,`n`,`W`,`w`,`H`,`h`,`R`,`r`,`I`,`i`,`S`,`s`,`A`,`a` and their separators', function () {
-			expect( new _v_( '2012-1-1 1:1:1 PM' ).isValidDate( 'Y-M-D H:I:S A' ) ).toBe( true );
-			expect( new _v_( '2012-1-1 1:1:1 pm' ).isValidDate( 'Y-M-D H:I:S a' ) ).toBe( true );
-			expect( new _v_( '2012-1-1 10:01:01 pm' ).isValidDate( 'Y-M-D h:i:s a' ) ).toBe( true );
-			expect( new _v_( '2012-1-1 1:1:1 pm' ).isValidDate( 'Y-M-D h:i:s a' ) ).toBe( true );
-
-			expect( new _v_( '2012-1-1 1:1:1 PM' ).validateWithRules( {rule: 'D=Y-M-D H:I:S A', rule_separator: '|'} ) ).toBe( true );
-			expect( new _v_( '2012-1-1 1:1:1 pm' ).validateWithRules( {rule: 'D=Y-M-D H:I:S a', rule_separator: '|'} ) ).toBe( true );
-			expect( new _v_( '2012-1-1 10:01:01 pm' ).validateWithRules( {rule: 'D=Y-M-D h:i:s A', rule_separator: '|'} ) ).toBe( true );
-			expect( new _v_( '2012-1-1 1:1:1 pm' ).validateWithRules( {rule: 'D=Y-M-D h:i:s A', rule_separator: '|'} ) ).toBe( true );
+			expect( new _v_( '2012-1-1 1:1:1 PM' ).separate( '|' ).validate( 'D=Y-M-D H:I:S A' ) ).toBe( true );
+			expect( new _v_( '2012-1-1 1:1:1 pm' ).separate( '|' ).validate( 'D=Y-M-D H:I:S a' ) ).toBe( true );
+			expect( new _v_( '2012-1-1 10:01:01 pm' ).separate( '|' ).validate( 'D=Y-M-D h:i:s A' ) ).toBe( true );
+			expect( new _v_( '2012-1-1 1:1:1 pm' ).separate( '|' ).validate( 'D=Y-M-D h:i:s A' ) ).toBe( true );
 
 			// TODO: add more tests here. but everything is working fine :)
 		} );

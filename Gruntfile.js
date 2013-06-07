@@ -4,11 +4,11 @@ module.exports = function ( grunt ) {
 		pkg: grunt.file.readJSON( 'package.json' ),
 
 		gcc: {
-			_v_: {
+			dash_v_dash: {
 				options: {
 					compilation_level: 'SIMPLE_OPTIMIZATIONS',
 					banner           : '/* <%= pkg.name %> v<%= pkg.version %>*/',
-					create_source_map: 'map/<%= pkg.name %>.min.js.map'
+					create_source_map: 'map/<%= pkg.name %>-<%= pkg.version %>.min.js.map'
 				},
 				src    : '<%= pkg.name %>.js',
 				dest   : '<%= pkg.name %>.min.js'
@@ -27,8 +27,8 @@ module.exports = function ( grunt ) {
 			map: {
 				files: [
 					{
-						src : 'map/<%= pkg.name %>.min.js.map',
-						dest: '<%= pkg.name %>-<%= pkg.version %>.min.js.map'
+						src : 'map/<%= pkg.name %>-<%= pkg.version %>.min.js.map',
+						dest: '<%= pkg.name %>.min.js.map'
 					}
 				]
 			}

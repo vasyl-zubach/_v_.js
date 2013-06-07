@@ -1,0 +1,342 @@
+html, body {
+	-webkit-font-smoothing : antialiased;
+	-moz-font-smoothing    : antialiased;
+	font-smoothing         : antialiased;
+	overflow               : hidden;
+	overflow-x             : auto;
+	margin                 : 0 !important;
+	padding                : 0;
+	width                  : 100%;
+	height                 : 100%;
+	font-size              : 13px;
+	font-family            : 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	line-height            : 20px;
+	min-width              : 900px;
+}
+
+* {
+	-webkit-box-sizing : border-box;
+	-moz-box-sizing    : border-box;
+	box-sizing         : border-box;
+}
+
+body {
+	padding-top : 50px;
+}
+
+sup {
+	color       : red;
+	text-shadow : 0 1px 1px rgba(0, 0, 0, .1);
+}
+
+p {
+	margin  : 0;
+	padding : 5px 0;
+}
+
+a {
+	color : royalblue;
+}
+
+.navbar {
+	position     : relative;
+	margin-top   : -50px;
+	height       : 50px;
+	border-right : 0;
+	border-left  : 0;
+	background   : #edeff3;
+	overflow     : visible;
+	box-shadow   : rgba(0, 0, 0, .2) 0 1px 1px;
+	z-index      : 100;
+}
+
+.navbar .name {
+	float       : left;
+	padding     : 0 5px 0 20px;
+	height      : 50px;
+	color       : #2c323d;
+	text-shadow : 0 1px 1px rgba(0, 0, 0, .1);
+	font-weight : 400;
+	font-size   : 25px;
+	line-height : 48px;
+}
+
+.navbar .sup {
+	padding-top : 0;
+	height      : 50px;
+	color       : #000;
+	text-shadow : 0 1px 0 rgba(255, 255, 255, .1);
+	font-weight : 400;
+	font-size   : 11px;
+	line-height : 30px;
+	opacity     : .5;
+	float       : left;
+}
+
+.navbar ul {
+	margin  : 0;
+	padding : 0 20px 0 0;
+	float   : right;
+	height  : 100%;
+}
+
+.navbar ul li {
+	float      : left;
+	list-style : none;
+}
+
+.navbar ul li a {
+	height          : 100%;
+	display         : block;
+	line-height     : 30px;
+	margin          : 10px 0;
+	padding         : 0 15px;
+	color           : #129edd;
+	text-decoration : none;
+	font-size       : 15px;
+	font-weight     : 600;
+}
+
+.navbar ul li a:hover {
+	padding    : 10px 15px;
+	margin     : 0;
+	background : #fff;
+	box-shadow : 0 0 1px rgba(0, 0, 0, .4);
+}
+
+.navbar ul li a.on {
+	background  : #e96f47;
+	padding     : 10px 15px;
+	margin      : 0;
+	box-shadow  : inset 0 0 5px rgba(0, 0, 0, .4);
+	color       : #fff;
+	text-shadow : rgba(0, 0, 0, .3) 0 1px 1px;
+}
+
+.navbar ul li a,
+.navbar ul li a.on,
+.navbar ul li a:hover {
+	-webkit-transition : all .5s;
+	-moz-transition    : all .5s;
+	-o-transition      : all .5s;
+	transition         : all .5s;
+}
+
+.content {
+	width               : 100%;
+	height              : 100%;
+	position            : relative;
+	background-color    : #4e9ad5;
+	background-size     : 100px 100px, 100px 100px, 20px 20px, 20px 20px;
+	background-position : 10px 10px;
+	overflow            : auto;
+	padding             : 20px;
+	background-image    : linear-gradient(rgba(255, 255, 255, .3) 1px, transparent 1px), linear-gradient(0, rgba(255, 255, 255, .3) 1px, transparent 1px), linear-gradient(rgba(255, 255, 255, .1) 1px, transparent 1px), linear-gradient(0, rgba(255, 255, 255, .1) 1px, transparent 1px);
+	background-image    : -webkit-linear-gradient(rgba(255, 255, 255, .3) 1px, transparent 1px), -webkit-linear-gradient(0, rgba(255, 255, 255, .3) 1px, transparent 1px), -webkit-linear-gradient(rgba(255, 255, 255, .1) 1px, transparent 1px), -webkit-linear-gradient(0, rgba(255, 255, 255, .1) 1px, transparent 1px);
+	background-image    : -moz-linear-gradient(rgba(255, 255, 255, .3) 1px, transparent 1px), -moz-linear-gradient(0, rgba(255, 255, 255, .3) 1px, transparent 1px), -moz-linear-gradient(rgba(255, 255, 255, .1) 1px, transparent 1px), -moz-linear-gradient(0, rgba(255, 255, 255, .1) 1px, transparent 1px);
+	background-image    : -ms-linear-gradient(rgba(255, 255, 255, .3) 1px, transparent 1px), -ms-linear-gradient(0, rgba(255, 255, 255, .3) 1px, transparent 1px), -ms-linear-gradient(rgba(255, 255, 255, .1) 1px, transparent 1px), -ms-linear-gradient(0, rgba(255, 255, 255, .1) 1px, transparent 1px);
+	background-image    : -o-linear-gradient(rgba(255, 255, 255, .3) 1px, transparent 1px), -o-linear-gradient(0, rgba(255, 255, 255, .3) 1px, transparent 1px), -o-linear-gradient(rgba(255, 255, 255, .1) 1px, transparent 1px), -o-linear-gradient(0, rgba(255, 255, 255, .1) 1px, transparent 1px);
+}
+
+.section {
+	padding          : 15px 30px;
+	background-color : #fff;
+	box-shadow       : 0 1px 5px rgba(0, 0, 0, .5);
+	position         : absolute;
+	top              : -1500px;
+	height           : 100%;
+	overflow         : auto;
+	opacity          : 0.5;
+}
+
+.section.in {
+	top     : 20px;
+	opacity : 1;
+}
+
+.section.out {
+	top     : 2000px;
+	opacity : 0.5;
+}
+
+.section h3 {
+	position : relative;
+}
+
+.section li pre {
+	margin : 0;
+}
+
+.doc-item {
+	margin   : 0 -30px;
+	padding  : 10px 40px;
+	position : relative;
+	overflow : hidden;
+}
+
+.doc-item::before {
+	content    : '';
+	overflow   : hidden;
+	height     : 100%;
+	width      : 5px;
+	position   : absolute;
+	background : #ea7048;
+	left       : -5px;
+	top        : 0;
+}
+
+.doc-item:hover::before {
+	left : 0;
+}
+
+.doc-item h3 {
+	margin      : 0;
+	padding     : 0;
+	color       : #0087cf;
+	font-family : Monaco, 'Andale Mono', 'MS Gothic', monospace;
+}
+
+.doc-item h3::before {
+	content  : '\025A0';
+	margin   : 0;
+	padding  : 0;
+	color    : #0087cf;
+	position : absolute;
+	left     : -15px;
+}
+
+hr {
+	border     : 0;
+	padding    : 0;
+	margin     : 0 -15px;
+	background : #ccc;
+	height     : 1px;
+}
+
+/* Code description styler */
+.code {
+	display       : inline-block;
+	margin        : 1px;
+	padding       : 0 3px;
+	height        : 20px;
+	border-radius : 3px;
+	background    : rgba(0, 0, 0, .02);
+	border        : 1px #e8e8e8 solid;
+	color         : #4a99d7;
+	/*font-family           : 'Lucida Console', Monaco, 'Andale Mono', 'MS Gothic', monospace;*/
+	line-height   : 20px;
+	font-weight   : 600;
+	font-size     : 12px;
+	font-family   : Monaco, 'Andale Mono', 'MS Gothic', monospace;
+}
+
+.nobr {
+	white-space : nowrap;
+}
+
+[contenteditable] {
+	border  : 1px rgba(0, 0, 0, .04) solid;
+	padding : 2px 4px;
+}
+
+[contenteditable]:focus {
+	outline    : none;
+	box-shadow : 0 0 3px red;
+}
+
+/**
+ * Social btns
+ * ---------- ---------- ---------- ---------- ----------
+ */
+.sociall_btns {
+	position   : absolute;
+	top        : -50px;
+	background : #fff;
+	z-index    : 1;
+	right      : 100px;
+	box-shadow : 0 1px 1px rgba(0, 0, 0, .2);
+	padding    : 0 0 10px 10px;
+}
+
+.sociall_btns.on {
+	top : 50px;
+}
+
+.btn {
+	float   : left;
+	padding : 15px 10px 0;
+	width   : 100px;
+}
+
+.navbar .btn-star {
+	margin-left : 10px;
+}
+
+.navbar .btn {
+	width : 90px;
+}
+
+/**
+ * notes
+ * ---------- ---------- ---------- ---------- ----------
+ */
+.note {
+	padding : 10px 20px;
+	color   : rgba(0, 0, 0, .5);
+}
+
+.note.info {
+	background : rgba(216, 181, 24, .4);
+	border     : 1px rgba(216, 181, 24, 1) solid;
+}
+
+/**
+ * Transitions
+ * ---------- ---------- ---------- ---------- ----------
+ */
+
+.section.fade {
+	-webkit-transition : all .5s;
+	-moz-transition    : all .5s;
+	-o-transition      : all .5s;
+	transition         : all .5s;
+}
+
+.sociall_btns,
+.sociall_btns.on,
+[contenteditable],
+[contenteditable]:focus,
+.doc-item::before,
+.doc-item:hover::before {
+	-webkit-transition : all .2s;
+	-moz-transition    : all .2s;
+	-o-transition      : all .2s;
+	transition         : all .2s;
+}
+
+.no-transition {
+	-webkit-transition : none !important;
+	-moz-transition    : none !important;
+	-o-transition      : none !important;
+	transition         : none !important;
+}
+
+/**
+ * page: About
+ * ---------- ---------- ---------- ---------- ----------
+ */
+
+.about h1 {
+	text-align : center;
+	font-size  : 100px;
+}
+
+.about h2 {
+	font-size   : 30px;
+	line-height : 40px;
+	text-align  : center;
+}
+
+.about h3 {
+	text-align : center;
+}

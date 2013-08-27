@@ -1,9 +1,14 @@
-\_v\_.js
+[\_v\_.js](http://tjrus.github.io/_v_.js)
 ======
 
-Validator for tFormer.js (http://tformerjs.com)
+Born to validate stuff in much more easy way than you can imagine.
 
 --
+Official twitter - [@_v_.js](http://twitter.com/_v_js)
 
-Working on new API...
-More info will be later...
+[API](http://tjrus.github.io/_v_.js/#api), 
+[Demos](http://tjrus.github.io/_v_.js/#demo),
+[Discuss](http://tjrus.github.io/_v_.js/#discuss)
+
+
+Developed by [Vasiliy Zubach](http://tjrus.com/) / [@TjRus](http://twitter.com/TjRus)

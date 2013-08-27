@@ -20,7 +20,7 @@
 		if ( !(this instanceof _v_) ) {
 			return new _v_( value );
 		}
-		this.value = value;
+		this.value = value || '';
 		this.separator = ' ';
 		this.rule = '';
 
@@ -47,7 +47,7 @@
 	 * @returns {*}
 	 */
 	_v_proto.rules = function ( rules ){
-		this.rule = rules;
+		this.rule = rules || '';
 		this.parseRules();
 		return this;
 	};

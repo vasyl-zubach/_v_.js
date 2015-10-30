@@ -4,9 +4,21 @@
  * (c) 2013 Vasiliy Zubach (aka TjRus) - http://tjrus.com/
  * _v_ may be freely distributed under the MIT license.
  */
-"use strict";
 
-(function ( window, document, undefined ){
+
+(function ( root, factory ) {
+	'use strict';
+	if ( !root._v_ ) {
+		root._v_ = factory();
+	}
+
+	if ( typeof define === 'function' && define.amd ) {
+		define( '_v_', [], function () {
+			return root._v_;
+		} );
+	}
+
+}( this, function () {
 
 	/**
 	 * Validator constructor
@@ -16,7 +28,7 @@
 	 * @returns {*}
 	 * @private
 	 */
-	var _v_ = function ( value ){
+	var _v_ = function ( value ) {
 		if ( !(this instanceof _v_) ) {
 			return new _v_( value );
 		}
@@ -28,14 +40,14 @@
 
 		return this;
 	};
-	var _v_proto = _v_.prototype;
+	var __p = _v_.prototype;
 
 	/**
 	 * sets rules separator
 	 * @param separator
 	 * @returns {*}
 	 */
-	_v_proto.separate = function ( separator ){
+	__p.separate = function ( separator ) {
 		this.separator = separator;
 		this.rules( this.rule ); // pars rules again
 		return this;
@@ -46,7 +58,7 @@
 	 * @param rules
 	 * @returns {*}
 	 */
-	_v_proto.rules = function ( rules ){
+	__p.rules = function ( rules ) {
 		this.rule = rules || '';
 		this.parseRules();
 		return this;
@@ -57,9 +69,9 @@
 	 * @param rule
 	 * @returns {*}
 	 */
-	_v_proto.addRule = function ( rule ){
+	__p.addRule = function ( rule ) {
 		var parsed = this.parsedRules;
-		var rule_v_ = _v_().rules( rule ).parsedRules;
+		var rule_v_ = new _v_().rules( rule ).parsedRules;
 
 		for ( var key in rule_v_ ) {
 			var rule = rule_v_[key];
@@ -92,15 +104,15 @@
 	 * @param rule
 	 * @returns {*}
 	 */
-	_v_proto.delRule = function ( rule ){
+	__p.delRule = function ( rule ) {
 		var parsed = this.parsedRules;
 		var rule_v_ = _v_().rules( rule ).parsedRules;
 		for ( var key in rule_v_ ) {
 			var rules = rule_v_[key];
-			if (!parsed.hasOwnProperty(key)) {
+			if ( !parsed.hasOwnProperty( key ) ) {
 				continue;
 			}
-			if ( rules === undefined) {
+			if ( rules === undefined ) {
 				delete parsed[key];
 				continue;
 			}
@@ -128,7 +140,7 @@
 	 * @param rules
 	 * @returns {boolean}
 	 */
-	_v_proto.hasRule = function ( rules ){
+	__p.hasRule = function ( rules ) {
 		var rule_v_ = _v_().rules( rules ).parsedRules;
 		var parsed = this.parsedRules;
 		for ( var key in rule_v_ ) {
@@ -156,15 +168,15 @@
 	 * parse validator rules and return object with rule keys and their values
 	 * @returns {{}}
 	 */
-	_v_proto.parseRules = function (){
+	__p.parseRules = function () {
 		var rules = this.rule.split( this.separator );
 		var parsed = {};
 		var keys = this.keys;
 
 		for ( var i = 0, rules_length = rules.length; i < rules_length; i++ ) {
 			var option = rules[i], func, rule, params = undefined;
-			if ( keys[ option ] ) {
-				func = keys[ option ];
+			if ( keys[option] ) {
+				func = keys[option];
 				rule = option;
 			} else {
 				var keys_order = this.keys_order;
@@ -194,19 +206,19 @@
 	 * @param rules
 	 * @returns {boolean}
 	 */
-	_v_proto.validate = function ( rules ){
+	__p.validate = function ( rules ) {
 		if ( rules ) {
 			this.rules( rules );
 		}
 		var parsed = this.parsedRules;
 		for ( var rule in parsed ) {
 			try {
-			if ( !this.keys[rule].call( this, parsed[rule] ) ) {
+				if ( !this.keys[rule].call( this, parsed[rule] ) ) {
+					return false;
+				}
+			} catch ( e ) {
 				return false;
 			}
-		} catch (e) {
-			return false;
-		}
 		}
 		return true;
 	};
@@ -217,21 +229,19 @@
 	 * @param rule
 	 * @param func
 	 */
-	_v_proto.extend = function ( rule, func ){
-		_v_proto.keys[rule] = func
-		_v_proto.keys_order.push( rule );
+	__p.extend = function ( rule, func ) {
+		__p.keys[rule] = func
+		__p.keys_order.push( rule );
 
-		_v_proto.keys_order = this.keys_order.sort( function ( a, b ){
+		__p.keys_order = this.keys_order.sort( function ( a, b ) {
 			return b.length - a.length;
 		} );
 		return this;
 	};
 
-	_v_proto.keys = {}; // object with rules
-	_v_proto.keys_order = []; // array with ordered rules
-
+	__p.keys = {}; // object with rules
+	__p.keys_order = []; // array with ordered rules
 	window._v_ = _v_;
-
 
 	/**
 	 * Rules extends
@@ -240,38 +250,38 @@
 	var rules = {
 
 		// required
-		'*'   : function (){
+		'*': function () {
 			return this.value.length !== 0;
 		},
 
 		// alpha
-		'a'   : function (){
+		'a': function () {
 			return (/^[a-z]+$/i).test( this.value );
 		},
 
 		// alpha numeric
-		'a1'  : function (){
+		'a1': function () {
 			return (/^[a-z0-9]+$/i).test( this.value );
 		},
 
 		// alpha dash
-		'a_'  : function (){
+		'a_': function () {
 			return (/^[a-z_-]+$/i).test( this.value );
 		},
 
 		// alpha numeric dash
-		'a1_' : function (){
+		'a1_': function () {
 			return (/^[a-z0-9_-]+$/i).test( this.value );
 		},
 
 		// email
-		'@'   : function (){
+		'@': function () {
 			var mail_regexp = /^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))$/i;
 			return mail_regexp.test( this.value );
 		},
 
 		// emails
-		'@s'  : function (){
+		'@s': function () {
 			var emails = this.value.split( ',' );
 			for ( var i = 0; i < emails.length; i++ ) {
 				if ( !_v_( emails[i] ).validate( '@' ) ) {
@@ -282,42 +292,42 @@
 		},
 
 		// ip address
-		'ip'  : function (){
+		'ip': function () {
 			return (/^((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){3}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})$/i).test( this.value );
 		},
 
 		// base65 string
-		'b64' : function (){
+		'b64': function () {
 			return (/^(?:[A-Za-z0-9+\/]{4})*(?:[A-Za-z0-9+\/]{2}==|[A-Za-z0-9+\/]{3}=|[A-Za-z0-9+\/]{4})$/).test( this.value );
 		},
 
 		// URL
-		'url' : function (){
+		'url': function () {
 			return (/^(https?|s?ftp):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i).test( this.value );
 		},
 
 		// integer
-		'int' : function (){
+		'int': function () {
 			return (/^\-?[0-9]+$/).test( this.value );
 		},
 
 		// Numeric
-		'num' : function (){
+		'num': function () {
 			return (/^[0-9]+$/).test( this.value );
 		},
 
 		// Decimal
-		'dec' : function (){
+		'dec': function () {
 			return (/^\-?[0-9]*\.?[0-9]+$/).test( this.value );
 		},
 
 		// Natural
-		'nat' : function (){
+		'nat': function () {
 			return (/^[0-9]+$/i).test( this.value );
 		},
 
 		// length equals to
-		'l='  : function ( length ){
+		'l=': function ( length ) {
 			if ( typeof(length) == 'number' || typeof(length) == 'string' ) {
 				return this.value.length == length;
 			} else {
@@ -329,68 +339,68 @@
 		},
 
 		// length more than
-		'l>'  : function ( length ){
+		'l>': function ( length ) {
 			return this.value.length > length;
 		},
 
 		// length more or equals to
-		'l>=' : function ( length ){
+		'l>=': function ( length ) {
 			return this.value.length >= length;
 		},
 
 		// length less than
-		'l<'  : function ( length ){
+		'l<': function ( length ) {
 			return this.value.length < length;
 		},
 
 		// length less or equals to
-		'l<=' : function ( length ){
+		'l<=': function ( length ) {
 			return this.value.length <= length;
 		},
 
 		// length is in range
-		'lr=' : function ( range ){
+		'lr=': function ( range ) {
 			return (this.value.length >= range[0] && this.value.length <= range[1]);
 		},
 
 		// is greater than
-		'>'   : function ( value ){
+		'>': function ( value ) {
 			var test = this.value;
 			return (_v_( test ).validate( 'dec' ) && parseFloat( test ) > parseFloat( value ));
 		},
 
 		// is greater or equals to
-		'>='  : function ( value ){
+		'>=': function ( value ) {
 			var test = this.value;
 			return (_v_( test ).validate( 'dec' ) && parseFloat( test ) >= parseFloat( value ));
 		},
 
 		// is less than
-		'<'   : function ( value ){
+		'<': function ( value ) {
 			var test = this.value;
 			return (_v_( test ).validate( 'dec' ) && parseFloat( test ) < parseFloat( value ));
 		},
 
 		// is less or equals to
-		'<='  : function ( value ){
+		'<=': function ( value ) {
 			var test = this.value;
 			return (_v_( test ).validate( 'dec' ) && parseFloat( test ) <= parseFloat( value ));
 		},
 
 		// is in range
-		'r='  : function ( value ){
+		'r=': function ( value ) {
 			var test = this.value;
 			return (_v_( test ).validate( 'dec' ) && parseFloat( test ) >= parseFloat( value[0] ) && parseFloat( test ) <= parseFloat( value[1] ));
 		},
 
 		// regular expression validation
-		'reg=': function ( regExpression ){
+		'reg=': function ( regExpression ) {
 			var reg = new RegExp( regExpression, 'i' );
 			return reg.test( this.value );
 		},
 
 		// matches to
-		'='   : function ( value ){
+		'=': function ( value ) {
 			var test = this.value;
 			if ( typeof value == 'string' || typeof value == 'number' ) {
 				return test == value;
@@ -411,18 +421,19 @@
 		},
 
 		// matches to id
-		'=#'  : function ( value ){
-			var test = this.value;
-			if ( typeof value == 'string' || typeof value == 'number' ) {
+		'=#': function ( value ) {
+			var test = this.value,
+				el;
+			if ( typeof value === 'string' || typeof value === 'number' ) {
 				value = value.split( ' ' );
-				var el = __getElById( value );
+				el = __getElById( value );
 				if ( !el ) {
 					return false;
 				}
 				return test == el.value;
 			} else {
 				for ( var i = 0; i < value.length; i++ ) {
-					var el = __getElById( value[i] );
+					el = __getElById( value[i] );
 					if ( el && test == el.value ) {
 						return true;
 					}
@@ -432,13 +443,13 @@
 		},
 
 		// not matches to
-		'!='  : function ( value ){
+		'!=': function ( value ) {
 			value = (__isArray( value )) ? '[' + value.join( ',' ) + ']' : value; // TODO: value separator
 			return !(_v_( this.value ).validate( '=' + value ));
 		},
 
 		// not contain
-		'!'   : function ( value ){
+		'!': function ( value ) {
 			if ( typeof value == 'string' || typeof value == 'number' ) {
 				return (this.value).toString().indexOf( value.toString() ) === -1;
 			} else {
@@ -452,32 +463,32 @@
 		},
 
 		// credit card (all cards type)
-		'c'   : function ( value ){
+		'c': function ( value ) {
 			return (/^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\d{3})\d{11})$/).test( this.value );
 		},
 
 		// visa card
-		'cv'  : function ( value ){
+		'cv': function ( value ) {
 			return (/^4[0-9]{12}(?:[0-9]{3})?$/).test( this.value );
 		},
 
 		// master card
-		'cm'  : function ( value ){
+		'cm': function ( value ) {
 			return (/^5[1-5][0-9]{14}$/).test( this.value );
 		},
 
 		// american express card
-		'ca'  : function ( value ){
+		'ca': function ( value ) {
 			return (/^3[47][0-9]{13}$/).test( this.value );
 		},
 
 		// discover card
-		'cd'  : function ( value ){
+		'cd': function ( value ) {
 			return (/^6(?:011|5[0-9]{2})[0-9]{12}$/).test( this.value );
 		},
 
 		// date format validation
-		'D='  : function ( format ){
+		'D=': function ( format ) {
 			return !!(__toDate( this.value, format ));
 		}
 	};
@@ -503,7 +514,7 @@
 	var __shortMonthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 	var __monthChars = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
 
-	var __daysInMonth = function ( month, year ){
+	var __daysInMonth = function ( month, year ) {
 		// If February, check for leap year
 		if ( (month == 1) && (((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0)) ) {
 			return 29;
@@ -539,7 +550,7 @@
 	 * @param {string} format The basic format of the string.
 	 * @return {Date} The string as a date object.
 	 */
-	var __toDate = function ( date, format ){
+	var __toDate = function ( date, format ) {
 		// Default values set to midnight Jan 1 of the current year.
 		var year = new Date().getFullYear(),
 			month = 0,
@@ -718,7 +729,7 @@
 	 * @returns {HTMLElement}
 	 * @private
 	 */
-	var __getElById = function ( id ){
+	var __getElById = function ( id ) {
 		return document.getElementById( id );
 	}
 
@@ -728,7 +739,7 @@
 	 * @returns {boolean}
 	 * @private
 	 */
-	var __isArray = function ( obj ){
+	var __isArray = function ( obj ) {
 		return Object.prototype.toString.call( obj ) == '[object Array]';
 	};
 
@@ -739,7 +750,7 @@
 	 * @returns {number}
 	 * @private
 	 */
-	var __inArray = function ( array, value ){
+	var __inArray = function ( array, value ) {
 		var index = -1,
 			length = array ? array.length : 0;
 		while ( ++index < length ) {
@@ -758,7 +769,7 @@
 	 * @returns {Array}
 	 * @private
 	 */
-	var __toArray = function ( el ){
+	var __toArray = function ( el ) {
 		return (!__isArray( el )) ? [el] : el;
 	}
 
@@ -769,13 +780,13 @@
 	 * @returns {string}
 	 * @private
 	 */
-	var __rulesStr = function ( obj, separator ){
+	var __rulesStr = function ( obj, separator ) {
 		separator = separator || ' ';
 		var str = separator;
 		for ( var key in obj ) {
 			var rules = obj[key];
-			if ( __isArray( rules )){
-				rules = __clearArray(rules);
+			if ( __isArray( rules ) ) {
+				rules = __clearArray( rules );
 			}
 			if ( !rules ) {
 				str += key + separator;
@@ -789,14 +800,24 @@
 		return str;
 	};
 
-	var __clearArray = function(arr){
+	var __clearArray = function ( arr ) {
 		var new_arr = [];
-		for (var i = 0, a_l = arr.length; i < a_l; i++) {
-			if (arr[i]) {
-				new_arr.push(arr[i]);
+		for ( var i = 0, a_l = arr.length; i < a_l; i++ ) {
+			if ( arr[i] ) {
+				new_arr.push( arr[i] );
 			}
 		}
 		return (new_arr && new_arr.length > 1) ? new_arr : new_arr[0];
 	}
 
-})( window, document );
+
+	// else {
+	return _v_;
+	//if ( typeof define === 'function' && define.amd ) {
+	//	define( '_v_', [], function () {
+	//		return _v_;
+	//	} );
+	//}
+	//}
+
+} ));

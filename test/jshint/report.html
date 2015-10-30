@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>JSHint Report</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="container-fluid">
+    <table class="table table-hover">
+        <tr>
+            <th class="text-center">Code</th>
+            <th class="text-center">Line</th>
+            <th class="text-center">Column</th>
+            <th>Evidence</th>
+            <th>Reason</th>
+        </tr>
+        <tr><td colspan="5"><b>../../src/_v_.js</b></td></tr><tr class="danger">
+    <td class="text-center">E007</td>
+    <td class="text-center">31</td>
+    <td class="text-center">5</td>
+    <td><code>	var _v_ &#61; function &#40; value &#41; &#123;</code></td>
+    <td>Missing &quot;use strict&quot; statement.</td>
+</tr><tr class="warning">
+    <td class="text-center">W055</td>
+    <td class="text-center">33</td>
+    <td class="text-center">24</td>
+    <td><code>			return new _v_&#40; value &#41;;</code></td>
+    <td>A constructor name should start with an uppercase letter.</td>
+</tr><tr class="warning">
+    <td class="text-center">W055</td>
+    <td class="text-center">74</td>
+    <td class="text-center">27</td>
+    <td><code>		var rule_v_ &#61; new _v_&#40;&#41;.rules&#40; rule &#41;.parsedRules;</code></td>
+    <td>A constructor name should start with an uppercase letter.</td>
+</tr><tr class="warning">
+    <td class="text-center">W004</td>
+    <td class="text-center">77</td>
+    <td class="text-center">22</td>
+    <td><code>			var rule &#61; rule_v_&#91;key&#93;;</code></td>
+    <td>&#39;rule&#39; is already defined.</td>
+</tr><tr class="warning">
+    <td class="text-center">W089</td>
+    <td class="text-center">76</td>
+    <td class="text-center">9</td>
+    <td><code>		for &#40; var key in rule_v_ &#41; &#123;</code></td>
+    <td>The body of a for in should be wrapped in an if statement to filter unwanted properties from the prototype.</td>
+</tr><tr class="warning">
+    <td class="text-center">W016</td>
+    <td class="text-center">124</td>
+    <td class="text-center">22</td>
+    <td><code>				if &#40; ~index &#41; &#123;</code></td>
+    <td>Unexpected use of &#39;~&#39;.</td>
+</tr><tr class="warning">
+    <td class="text-center">W089</td>
+    <td class="text-center">110</td>
+    <td class="text-center">9</td>
+    <td><code>		for &#40; var key in rule_v_ &#41; &#123;</code></td>
+    <td>The body of a for in should be wrapped in an if statement to filter unwanted properties from the prototype.</td>
+</tr><tr class="warning">
+    <td class="text-center">W089</td>
+    <td class="text-center">146</td>
+    <td class="text-center">9</td>
+    <td><code>		for &#40; var key in rule_v_ &#41; &#123;</code></td>
+    <td>The body of a for in should be wrapped in an if statement to filter unwanted properties from the prototype.</td>
+</tr><tr class="warning">
+    <td class="text-center">W080</td>
+    <td class="text-center">177</td>
+    <td class="text-center">48</td>
+    <td><code>			var option &#61; rules&#91;i&#93;&#44; func&#44; rule&#44; params &#61; undefined;</code></td>
+    <td>It&#39;s not necessary to initialize &#39;params&#39; to &#39;undefined&#39;.</td>
+</tr><tr class="warning">
+    <td class="text-center">W116</td>
+    <td class="text-center">189</td>
+    <td class="text-center">43</td>
+    <td><code>						if &#40; paramArray &#41; params &#61; paramArray&#91;1&#93;.split&#40; &#39;&#44;&#39; &#41;; // TODO: params separator</code></td>
+    <td>Expected &#39;&#123;&#39; and instead saw &#39;params&#39;.</td>
+</tr><tr class="warning">
+    <td class="text-center">W089</td>
+    <td class="text-center">214</td>
+    <td class="text-center">9</td>
+    <td><code>		for &#40; var rule in parsed &#41; &#123;</code></td>
+    <td>The body of a for in should be wrapped in an if statement to filter unwanted properties from the prototype.</td>
+</tr><tr class="warning">
+    <td class="text-center">W033</td>
+    <td class="text-center">233</td>
+    <td class="text-center">30</td>
+    <td><code>		__p.keys&#91;rule&#93; &#61; func</code></td>
+    <td>Missing semicolon.</td>
+</tr><tr class="warning">
+    <td class="text-center">W116</td>
+    <td class="text-center">331</td>
+    <td class="text-center">35</td>
+    <td><code>			if &#40; typeof&#40;length&#41; &#61;&#61; &#39;number&#39; || typeof&#40;length&#41; &#61;&#61; &#39;string&#39; &#41; &#123;</code></td>
+    <td>Expected &#39;&#61;&#61;&#61;&#39; and instead saw &#39;&#61;&#61;&#39;.</td>
+</tr><tr class="warning">
+    <td class="text-center">W116</td>
+    <td class="text-center">331</td>
+    <td class="text-center">65</td>
+    <td><code>			if &#40; typeof&#40;length&#41; &#61;&#61; &#39;number&#39; || typeof&#40;length&#41; &#61;&#61; &#39;string&#39; &#41; &#123;</code></td>
+    <td>Expected &#39;&#61;&#61;&#61;&#39; and instead saw &#39;&#61;&#61;&#39;.</td>
+</tr><tr class="warning">
+    <td class="text-center">W116</td>
+    <td class="text-center">332</td>
+    <td class="text-center">44</td>
+    <td><code>				return this.value.length &#61;&#61; length;</code></td>
+    <td>Expected &#39;&#61;&#61;&#61;&#39; and instead saw &#39;&#61;&#61;&#39;.</td>
+</tr><tr class="warning">
+    <td class="text-center">W116</td>
+    <td class="text-center">335</td>
+    <td class="text-center">46</td>
+    <td><code>					if &#40; this.value.length &#61;&#61; length&#91;key&#93; &#41; return true;</code></td>
+    <td>Expected &#39;&#61;&#61;&#61;&#39; and instead saw &#39;&#61;&#61;&#39;.</td>
+</tr><tr class="warning">
+    <td class="text-center">W116</td>
+    <td class="text-center">335</td>
+    <td class="text-center">61</td>
+    <td><code>					if &#40; this.value.length &#61;&#61; length&#91;key&#93; &#41; return true;</code></td>
+    <td>Expected &#39;&#123;&#39; and instead saw &#39;return&#39;.</td>
+</tr><tr class="warning">
+    <td class="text-center">W116</td>
+    <td class="text-center">405</td>
+    <td class="text-center">33</td>
+    <td><code>			if &#40; typeof value &#61;&#61; &#39;string&#39; || typeof value &#61;&#61; &#39;number&#39; &#41; &#123;</code></td>
+    <td>Expected &#39;&#61;&#61;&#61;&#39; and instead saw &#39;&#61;&#61;&#39;.</td>
+</tr><tr class="warning">
+    <td class="text-center">W116</td>
+    <td class="text-center">405</td>
+    <td class="text-center">61</td>
+    <td><code>			if &#40; typeof value &#61;&#61; &#39;string&#39; || typeof value &#61;&#61; &#39;number&#39; &#41; &#123;</code></td>
+    <td>Expected &#39;&#61;&#61;&#61;&#39; and instead saw &#39;&#61;&#61;&#39;.</td>
+</tr><tr class="warning">
+    <td class="text-center">W116</td>
+    <td class="text-center">406</td>
+    <td class="text-center">31</td>
+    <td><code>				return test &#61;&#61; value;</code></td>
+    <td>Expected &#39;&#61;&#61;&#61;&#39; and instead saw &#39;&#61;&#61;&#39;.</td>
+</tr><tr class="warning">
+    <td class="text-center">W116</td>
+    <td class="text-center">414</td>
+    <td class="text-center">37</td>
+    <td><code>						if &#40; test &#61;&#61; el.value &#41; return true;</code></td>
+    <td>Expected &#39;&#61;&#61;&#61;&#39; and instead saw &#39;&#61;&#61;&#39;.</td>
+</tr><tr class="warning">
+    <td class="text-center">W116</td>
+    <td class="text-center">414</td>
+    <td class="text-center">49</td>
+    <td><code>						if &#40; test &#61;&#61; el.value &#41; return true;</code></td>
+    <td>Expected &#39;&#123;&#39; and instead saw &#39;return&#39;.</td>
+</tr><tr class="warning">
+    <td class="text-center">W116</td>
+    <td class="text-center">416</td>
+    <td class="text-center">37</td>
+    <td><code>						if &#40; test &#61;&#61; value&#91;i&#93; &#41; return true;</code></td>
+    <td>Expected &#39;&#61;&#61;&#61;&#39; and instead saw &#39;&#61;&#61;&#39;.</td>
+</tr><tr class="warning">
+    <td class="text-center">W116</td>
+    <td class="text-center">416</td>
+    <td class="text-center">49</td>
+    <td><code>						if &#40; test &#61;&#61; value&#91;i&#93; &#41; return true;</code></td>
+    <td>Expected &#39;&#123;&#39; and instead saw &#39;return&#39;.</td>
+</tr><tr class="warning">
+    <td class="text-center">W116</td>
+    <td class="text-center">433</td>
+    <td class="text-center">31</td>
+    <td><code>				return test &#61;&#61; el.value;</code></td>
+    <td>Expected &#39;&#61;&#61;&#61;&#39; and instead saw &#39;&#61;&#61;&#39;.</td>
+</tr><tr class="warning">
+    <td class="text-center">W116</td>
+    <td class="text-center">437</td>
+    <td class="text-center">39</td>
+    <td><code>					if &#40; el &amp;&amp; test &#61;&#61; el.value &#41; &#123;</code></td>
+    <td>Expected &#39;&#61;&#61;&#61;&#39; and instead saw &#39;&#61;&#61;&#39;.</td>
+</tr><tr class="warning">
+    <td class="text-center">W116</td>
+    <td class="text-center">453</td>
+    <td class="text-center">33</td>
+    <td><code>			if &#40; typeof value &#61;&#61; &#39;string&#39; || typeof value &#61;&#61; &#39;number&#39; &#41; &#123;</code></td>
+    <td>Expected &#39;&#61;&#61;&#61;&#39; and instead saw &#39;&#61;&#61;&#39;.</td>
+</tr><tr class="warning">
+    <td class="text-center">W116</td>
+    <td class="text-center">453</td>
+    <td class="text-center">61</td>
+    <td><code>			if &#40; typeof value &#61;&#61; &#39;string&#39; || typeof value &#61;&#61; &#39;number&#39; &#41; &#123;</code></td>
+    <td>Expected &#39;&#61;&#61;&#61;&#39; and instead saw &#39;&#61;&#61;&#39;.</td>
+</tr><tr class="warning">
+    <td class="text-center">W016</td>
+    <td class="text-center">457</td>
+    <td class="text-center">26</td>
+    <td><code>					if &#40; ~&#40;this.value&#41;.toString&#40;&#41;.indexOf&#40; value&#91;key&#93;.toString&#40;&#41; &#41; &#41; &#123;</code></td>
+    <td>Unexpected use of &#39;~&#39;.</td>
+</tr><tr class="warning">
+    <td class="text-center">W089</td>
+    <td class="text-center">497</td>
+    <td class="text-center">5</td>
+    <td><code>	for &#40; var key in rules &#41; &#123;</code></td>
+    <td>The body of a for in should be wrapped in an if statement to filter unwanted properties from the prototype.</td>
+</tr><tr class="warning">
+    <td class="text-center">W116</td>
+    <td class="text-center">519</td>
+    <td class="text-center">23</td>
+    <td><code>		if &#40; &#40;month &#61;&#61; 1&#41; &amp;&amp; &#40;&#40;&#40;year &#37; 4 &#61;&#61;&#61; 0&#41; &amp;&amp; &#40;year &#37; 100 &#33;&#61;&#61; 0&#41;&#41; || &#40;year &#37; 400 &#61;&#61;&#61; 0&#41;&#41; &#41; &#123;</code></td>
+    <td>Expected &#39;&#61;&#61;&#61;&#39; and instead saw &#39;&#61;&#61;&#39;.</td>
+</tr><tr class="warning">
+    <td class="text-center">W116</td>
+    <td class="text-center">652</td>
+    <td class="text-center">37</td>
+    <td><code>					pattern &#43;&#61; &#40;c &#61;&#61; &#39;^&#39; ? format.charAt&#40; &#43;&#43;i &#41; : c&#41;;</code></td>
+    <td>Expected &#39;&#61;&#61;&#61;&#39; and instead saw &#39;&#61;&#61;&#39;.</td>
+</tr><tr class="warning">
+    <td class="text-center">W116</td>
+    <td class="text-center">674</td>
+    <td class="text-center">25</td>
+    <td><code>						return null;</code></td>
+    <td>Expected &#39;&#123;&#39; and instead saw &#39;return&#39;.</td>
+</tr><tr class="warning">
+    <td class="text-center">W116</td>
+    <td class="text-center">679</td>
+    <td class="text-center">25</td>
+    <td><code>						return null;</code></td>
+    <td>Expected &#39;&#123;&#39; and instead saw &#39;return&#39;.</td>
+</tr><tr class="warning">
+    <td class="text-center">W116</td>
+    <td class="text-center">684</td>
+    <td class="text-center">25</td>
+    <td><code>						return null;</code></td>
+    <td>Expected &#39;&#123;&#39; and instead saw &#39;return&#39;.</td>
+</tr><tr class="warning">
+    <td class="text-center">W116</td>
+    <td class="text-center">692</td>
+    <td class="text-center">17</td>
+    <td><code>				return null;</code></td>
+    <td>Expected &#39;&#123;&#39; and instead saw &#39;return&#39;.</td>
+</tr><tr class="warning">
+    <td class="text-center">W116</td>
+    <td class="text-center">697</td>
+    <td class="text-center">31</td>
+    <td><code>			if &#40; hoursStyle &#61;&#61; &#39;h&#39; &amp;&amp; &#40;hours &#61;&#61;&#61; 0 || hours &gt; 12&#41; &#41;</code></td>
+    <td>Expected &#39;&#61;&#61;&#61;&#39; and instead saw &#39;&#61;&#61;&#39;.</td>
+</tr><tr class="warning">
+    <td class="text-center">W116</td>
+    <td class="text-center">698</td>
+    <td class="text-center">17</td>
+    <td><code>				return null;</code></td>
+    <td>Expected &#39;&#123;&#39; and instead saw &#39;return&#39;.</td>
+</tr><tr class="warning">
+    <td class="text-center">W116</td>
+    <td class="text-center">700</td>
+    <td class="text-center">17</td>
+    <td><code>				return null;</code></td>
+    <td>Expected &#39;&#123;&#39; and instead saw &#39;return&#39;.</td>
+</tr><tr class="warning">
+    <td class="text-center">W116</td>
+    <td class="text-center">706</td>
+    <td class="text-center">17</td>
+    <td><code>				return null;</code></td>
+    <td>Expected &#39;&#123;&#39; and instead saw &#39;return&#39;.</td>
+</tr><tr class="warning">
+    <td class="text-center">W116</td>
+    <td class="text-center">712</td>
+    <td class="text-center">17</td>
+    <td><code>				return null;</code></td>
+    <td>Expected &#39;&#123;&#39; and instead saw &#39;return&#39;.</td>
+</tr><tr class="warning">
+    <td class="text-center">W116</td>
+    <td class="text-center">718</td>
+    <td class="text-center">26</td>
+    <td><code>			if &#40; &#40;amPm &#61;&#61; &#39;pm&#39; || amPm &#61;&#61; &#39;PM&#39;&#41; &amp;&amp; &#40;hours &lt; 12&#41; &#41;</code></td>
+    <td>Expected &#39;&#61;&#61;&#61;&#39; and instead saw &#39;&#61;&#61;&#39;.</td>
+</tr><tr class="warning">
+    <td class="text-center">W116</td>
+    <td class="text-center">718</td>
+    <td class="text-center">42</td>
+    <td><code>			if &#40; &#40;amPm &#61;&#61; &#39;pm&#39; || amPm &#61;&#61; &#39;PM&#39;&#41; &amp;&amp; &#40;hours &lt; 12&#41; &#41;</code></td>
+    <td>Expected &#39;&#61;&#61;&#61;&#39; and instead saw &#39;&#61;&#61;&#39;.</td>
+</tr><tr class="warning">
+    <td class="text-center">W116</td>
+    <td class="text-center">719</td>
+    <td class="text-center">17</td>
+    <td><code>				hours &#43;&#61; 12;</code></td>
+    <td>Expected &#39;&#123;&#39; and instead saw &#39;hours&#39;.</td>
+</tr><tr class="warning">
+    <td class="text-center">W033</td>
+    <td class="text-center">734</td>
+    <td class="text-center">6</td>
+    <td><code>	&#125;</code></td>
+    <td>Missing semicolon.</td>
+</tr><tr class="warning">
+    <td class="text-center">W116</td>
+    <td class="text-center">743</td>
+    <td class="text-center">56</td>
+    <td><code>		return Object.prototype.toString.call&#40; obj &#41; &#61;&#61; &#39;&#91;object Array&#93;&#39;;</code></td>
+    <td>Expected &#39;&#61;&#61;&#61;&#39; and instead saw &#39;&#61;&#61;&#39;.</td>
+</tr><tr class="warning">
+    <td class="text-center">W033</td>
+    <td class="text-center">774</td>
+    <td class="text-center">6</td>
+    <td><code>	&#125;</code></td>
+    <td>Missing semicolon.</td>
+</tr><tr class="warning">
+    <td class="text-center">W089</td>
+    <td class="text-center">786</td>
+    <td class="text-center">9</td>
+    <td><code>		for &#40; var key in obj &#41; &#123;</code></td>
+    <td>The body of a for in should be wrapped in an if statement to filter unwanted properties from the prototype.</td>
+</tr><tr class="warning">
+    <td class="text-center">W033</td>
+    <td class="text-center">811</td>
+    <td class="text-center">6</td>
+    <td><code>	&#125;</code></td>
+    <td>Missing semicolon.</td>
+</tr><tr class="warning">
+    <td class="text-center">W117</td>
+    <td class="text-center">677</td>
+    <td class="text-center">39</td>
+    <td><code>					month &#61; parseInt&#40; __monthNumbers&#91;matches&#91;monthPos&#93;&#93;&#44; 10 &#41;;</code></td>
+    <td>&#39;__monthNumbers&#39; is not defined.</td>
+</tr><tr class="danger">
+    <td class="text-center">E043</td>
+    <td class="text-center">677</td>
+    <td class="text-center">39</td>
+    <td><code>undefined</code></td>
+    <td>Too many errors. &#40;82&#37; scanned&#41;.</td>
+</tr>
+    </table>
+    <div class="well">
+    Found <span class="label label-default">51</span> failures - <span class="label label-danger">2 errors</span> &amp; <span class="label label-warning">49 warnings</span>
+</div>
+</div>
+
+</body>
+</html>

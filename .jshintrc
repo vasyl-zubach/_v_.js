@@ -1,0 +1,33 @@
+{
+	"nonew" : true,
+	"jquery" : true,
+	"curly" : true,
+	"noarg" : true,
+	"forin" : true,
+	"eqeqeq" : true,
+	"undef" : true,
+	"bitwise" : true,
+	"browser" : true,
+	"devel" : true,
+	"laxbreak" : true,
+	"worker" : true,
+	"newcap" : true,
+	"sub" : true,
+	"strict" : true,
+	"esnext" : true,
+	"globals" : {
+		"define" : false,
+		"require" : false,
+		"requirejs" : false,
+		"_v_" : false,
+		"_" : false,
+		"describe" : false,
+		"it" : false,
+		"before" : false,
+		"after" : false,
+		"beforeEach" : false,
+		"afterEach" : false,
+		"expect" : false,
+		"sinon" : false
+	}
+}

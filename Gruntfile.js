@@ -1,44 +1,41 @@
+var jshintReporter = require( 'jshint-html-reporter' );
+
 module.exports = function ( grunt ) {
+	require( 'grunt-task-loader' )( grunt );
+	require( 'time-grunt' )( grunt );
 
 	grunt.initConfig( {
 		pkg: grunt.file.readJSON( 'package.json' ),
 
-		gcc: {
-			dash_v_dash: {
-				options: {
-					compilation_level: 'SIMPLE_OPTIMIZATIONS',
-					banner           : '/* <%= pkg.name %> v<%= pkg.version %>*/',
-					create_source_map: 'map/<%= pkg.name %>-<%= pkg.version %>.min.js.map'
-				},
-				src    : '<%= pkg.name %>.js',
-				dest   : '<%= pkg.name %>.min.js'
+		uglify: {
+			options: {
+				banner: '/*! <%= pkg.name %>.js | <%= grunt.template.today("yyyy-mm-dd") %> */\n'
+			},
+			dist   : {
+				files: {
+					'dist/_v_.min.js': ['src/_v_.js']
+				}
 			}
 		},
 
-		copy: {
-			main: {
-				files: [
-					{
-						src : '<%= pkg.name %>.min.js',
-						dest: 'versions/<%= pkg.name %>-<%= pkg.version %>.min.js'
-					}
-				]
+		jshint: {
+			options: {
+				jshintrc      : '.jshintrc',
+				reporter      : jshintReporter,
+				reporterOutput: 'test/jshint/report.html'
 			},
-			map: {
-				files: [
-					{
-						src : 'map/<%= pkg.name %>-<%= pkg.version %>.min.js.map',
-						dest: '<%= pkg.name %>.min.js.map'
-					}
-				]
+			all    : ['src/**/*.js']
+		},
+
+		watch: {
+			js: {
+				files: ['src/**/*.js'],
+				tasks: ['js']
 			}
 		}
-
 	} );
 
-	grunt.loadNpmTasks( 'grunt-contrib-concat' );
-	grunt.loadNpmTasks( 'grunt-contrib-copy' );
-	grunt.loadNpmTasks( 'grunt-gcc' );
+	grunt.registerTask( 'default', ['js'] );
 
-	grunt.registerTask( 'default', ['gcc', 'copy'] );
+	grunt.registerTask( 'js', ['uglify', 'jshint'] );
 };
